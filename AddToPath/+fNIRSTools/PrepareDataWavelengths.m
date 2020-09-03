@@ -265,7 +265,7 @@ while ~feof(fid_in)
     else
         if regexp(line,'Wavelengths=\s*')
             fprintf('\t\t\tUpdating wavelengths...');
-            line = sprintf('Wavelengths=[%d%s]; ', p.WAVELENGTHS_USE(1), sprintf('\t%d', p.WAVELENGTHS_USE(2:end)));
+            line = sprintf('Wavelengths="%d%s"', p.WAVELENGTHS_USE(1), sprintf('	%d', p.WAVELENGTHS_USE(2:end)));
             fprintf('done\n');
 
         elseif regexp(line,'Mod Amp=\s*')
@@ -274,7 +274,7 @@ while ~feof(fid_in)
             fprintf('"%.3f%s"\n', mod_amp(1), sprintf(' %.3f', mod_amp(2:end)));
 
             fprintf('\t\t\tWriting modified mod amp...');
-            mod_amp = sprintf('"%.3f%s"', mod_amp(wavelength_index(1)), sprintf('\t%.3f', mod_amp(wavelength_index(2:end))));
+            mod_amp = sprintf('"%.3f%s"', mod_amp(wavelength_index(1)), sprintf('	%.3f', mod_amp(wavelength_index(2:end))));
             line = ['Mod Amp=' mod_amp];
             fprintf('%s\n', mod_amp);
 
@@ -284,7 +284,7 @@ while ~feof(fid_in)
             fprintf('"%.3f%s"\n', thresh(1), sprintf(' %.3f', thresh(2:end)));
 
             fprintf('\t\t\tWriting modified thresholds...');
-            thresh = sprintf('"%.3f%s"', thresh(wavelength_index(1)), sprintf('\t%.3f', thresh(wavelength_index(2:end))));
+            thresh = sprintf('"%.3f%s"', thresh(wavelength_index(1)), sprintf('	%.3f', thresh(wavelength_index(2:end))));
             line = ['Threshold=' thresh];
             fprintf('%s\n', thresh);
 
