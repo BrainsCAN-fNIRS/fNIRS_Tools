@@ -1,4 +1,4 @@
-% analyzir_bids_process_runJobs(bids_info, source_type, target_type, jobs, overwrite)
+% fNIRSTools_bids_process_runJobs(bids_info, source_type, target_type, jobs, overwrite)
 %
 % Runs a job set on individual runs. Existing outputs will be skipped by
 % default.
@@ -12,7 +12,7 @@
 %   flags           optional cell array of strings
 %                       decon = save subset of decon output (<1mb compared to >600mb)
 %                       group = combine runs and perform jobs on the set
-function analyzir_bids_process_runJobs(bids_info, input_type, output_type, jobs, overwrite, flags)
+function fNIRSTools_bids_process_runJobs(bids_info, input_type, output_type, jobs, overwrite, flags)
 
 %% Defaults
 

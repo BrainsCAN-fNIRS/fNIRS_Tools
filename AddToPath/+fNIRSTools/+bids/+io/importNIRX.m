@@ -1,4 +1,4 @@
-function analyzir_bids_io_importNIRX(bids_info, data_directory, order_filepath, short_distance_threshold, print_prefix)
+function fNIRSTools_bids_io_importNIRX(bids_info, data_directory, order_filepath, short_distance_threshold, print_prefix)
 
 %% Check BIDS Info
 if bids_info.number_datasets ~= 1

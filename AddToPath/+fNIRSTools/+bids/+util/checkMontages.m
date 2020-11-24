@@ -1,6 +1,6 @@
 % Reads all snirf files and confirms that they used the same montage
 % If "complete" is true, then all comparisons are made.
-function [all_identical] = analyzir_bids_util_checkMontages(bids_info, complete)
+function [all_identical] = fNIRSTools_bids_util_checkMontages(bids_info, complete)
 
 %% Inputs
 

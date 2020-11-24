@@ -1,4 +1,4 @@
-function [data] = analyzir_bids_io_readFile(bids_info, type, selection, allow_missing, group)
+function [data] = fNIRSTools_bids_io_readFile(bids_info, type, selection, allow_missing, group)
 
 %% Inputs
 
