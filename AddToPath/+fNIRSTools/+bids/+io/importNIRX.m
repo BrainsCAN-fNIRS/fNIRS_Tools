@@ -1,4 +1,4 @@
-function analyzir_bids_io_importNIRX(bids_info, data_directory, order_filepath, short_distance_threshold, print_prefix)
+function fNIRSTools_bids_io_importNIRX(bids_info, data_directory, order_filepath, short_distance_threshold, print_prefix)
 
 %% Check BIDS Info
 if bids_info.number_datasets ~= 1
@@ -33,7 +33,7 @@ end
 %% Output Filepath
 
 %filepath
-[filepath_snirf, already_exists] = analyzir_bids.io.getFilepath('SNIRF', bids_info, false);
+[filepath_snirf, already_exists] = fNIRSTools.bids.io.getFilepath('SNIRF', bids_info, false);
 
 %already done?
 if already_exists
@@ -204,7 +204,7 @@ if set_conditions
     xlabel 'Time (sec)';
     set(gca,'ytick',[0.5 1.5],'yticklabels', {'New' 'Prior'});
         
-    filepath = analyzir_bids.io.getFilepath('import_cond_comparison_fig', bids_info, false);
+    filepath = fNIRSTools.bids.io.getFilepath('import_cond_comparison_fig', bids_info, false);
     fprintf('%s\t\tWriting: %s\n', print_prefix, filepath);
     img = getframe(gcf);
     imwrite(img.cdata,filepath);

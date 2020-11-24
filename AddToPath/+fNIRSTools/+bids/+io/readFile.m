@@ -1,4 +1,4 @@
-function [data] = analyzir_bids_io_readFile(bids_info, type, selection, allow_missing, group)
+function [data] = fNIRSTools_bids_io_readFile(bids_info, type, selection, allow_missing, group)
 
 %% Inputs
 
@@ -8,7 +8,7 @@ type = upper(type);
 %   nan=use all
 %   ind=use that one index instead
 if exist('selection', 'var') && ~isnan(selection)
-    bids_info = analyzir_bids.io.getBIDSInfo(bids_info.root_directory, ...
+    bids_info = fNIRSTools.bids.io.getBIDSInfo(bids_info.root_directory, ...
                                              bids_info.datasets(selection).task_name, ...
                                              bids_info.datasets(selection).subject_number, ...
                                              bids_info.datasets(selection).run_number, ...
@@ -30,7 +30,7 @@ if group
     filepaths = {[bids_info.root_directory filesep 'derivatives' filesep 'GROUP_' type '.mat']};
     exists = exist(filepaths{1}, 'file');
 else
-    [filepaths, exists] = analyzir_bids.io.getFilepath(type, bids_info, true);
+    [filepaths, exists] = fNIRSTools.bids.io.getFilepath(type, bids_info, true);
 end
 
 %stop if missing files

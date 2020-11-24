@@ -1,4 +1,4 @@
-% [fig] = analyzir_bids_util_plotDecon(bids_info, file_suffix, output_suffix, channels, montage_mode, conditions, data_types, colours)
+% [fig] = fNIRSTools_bids_util_plotDecon(bids_info, file_suffix, output_suffix, channels, montage_mode, conditions, data_types, colours)
 %
 % Outputs:
 %   fig             handle          (optional) return figure handle
@@ -25,7 +25,7 @@
 %
 %   colours         [Nx3 num]/nan   default=nan     Colours for each condition. If NaN, then jet(#cond) will be used.
 %
-function [fig] = analyzir_bids_util_plotDecon(bids_info, input_suffix, output_suffix, channels, montage_mode, conditions, data_types, colours)
+function [fig] = fNIRSTools_bids_util_plotDecon(bids_info, input_suffix, output_suffix, channels, montage_mode, conditions, data_types, colours)
 
 %% Defaults
 
@@ -74,7 +74,7 @@ end
 
 if bids_info.number_datasets > 1
     fprintf('Checking montages...\n');
-    txt = evalc('same_montage = analyzir_bids.util.checkMontages(bids_info);');
+    txt = evalc('same_montage = fNIRSTools.bids.util.checkMontages(bids_info);');
     if ~same_montage
         error('Datasets do not have the same montage')
     end
@@ -84,7 +84,7 @@ end
 %% Load Data
 
 fprintf('Loading data...\n');
-data = analyzir_bids.io.readFile(bids_info, input_suffix);
+data = fNIRSTools.bids.io.readFile(bids_info, input_suffix);
 
 
 %% Handle Flexible Inputs
