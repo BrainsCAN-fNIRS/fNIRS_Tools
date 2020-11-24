@@ -38,8 +38,8 @@ output_type = upper(output_type);
 
 %% Handle BIDS Info
 
-[filepaths_input,exists_input] = analyzir_bids.io.getFilepath(input_type, bids_info, true);
-[filepaths_output,exists_output] = analyzir_bids.io.getFilepath(output_type, bids_info, true);
+[filepaths_input,exists_input] = fNIRSTools.bids.io.getFilepath(input_type, bids_info, true);
+[filepaths_output,exists_output] = fNIRSTools.bids.io.getFilepath(output_type, bids_info, true);
 
 
 %% Get Job Info To Display
@@ -73,7 +73,7 @@ if ~any(strcmp(flags, 'group'))
             else
                 %load
                 fprintf('\t\tLoading %s: %s\n', input_type, filepaths_input{i});
-                input = analyzir_bids.io.readFile(bids_info, input_type, i);
+                input = fNIRSTools.bids.io.readFile(bids_info, input_type, i);
 
                 %process
                 runSingleSet(input, jobs, output_type, filepaths_output{i}, flags, sprintf('\t\t'));
@@ -94,7 +94,7 @@ else
     
         %load all
         fprintf('Loading all input %s...\n', input_type);
-        inputs = analyzir_bids.io.readFile(bids_info, input_type);
+        inputs = fNIRSTools.bids.io.readFile(bids_info, input_type);
         
         %process
         runSingleSet(inputs, jobs, output_type, filepath_output, flags, '');

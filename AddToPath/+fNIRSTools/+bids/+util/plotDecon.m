@@ -74,7 +74,7 @@ end
 
 if bids_info.number_datasets > 1
     fprintf('Checking montages...\n');
-    txt = evalc('same_montage = analyzir_bids.util.checkMontages(bids_info);');
+    txt = evalc('same_montage = fNIRSTools.bids.util.checkMontages(bids_info);');
     if ~same_montage
         error('Datasets do not have the same montage')
     end
@@ -84,7 +84,7 @@ end
 %% Load Data
 
 fprintf('Loading data...\n');
-data = analyzir_bids.io.readFile(bids_info, input_suffix);
+data = fNIRSTools.bids.io.readFile(bids_info, input_suffix);
 
 
 %% Handle Flexible Inputs
