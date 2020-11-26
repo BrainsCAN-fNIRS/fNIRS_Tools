@@ -99,30 +99,6 @@ if(isfield(info,'ShortDetectors') && (info.ShortDetectors > 0) && (size(probe.de
         info.S_D_Mask(:,info.Detectors-info.ShortDetectors+1:end)=eye(info.ShortDetectors);
 end
 
-%% Fix SDC Distances
-
-NIRX_SD_DIST = 8; %mm
-for sd = (info.Detectors - info.ShortDetectors + 1):size(probe.detPos,1)
-    s = find(info.S_D_Mask(:,sd));
-    if numel(s) > 1
-        error('Attempting to map short-detector to multiple sources')
-    elseif numel(s) > 0
-        ind_sd = find(ismember(probe.optodes.Name,sprintf('Detector-%04d', sd)));
-        ind_s = find(ismember(probe.optodes.Name,sprintf('Source-%04d', s)));
-        
-        if (numel(ind_sd) ~= 1) || (numel(ind_s) ~= 1)
-            error('Did not find exactly one match for source %d and short-detector %d', s, sd)
-        else
-            probe.optodes.X(ind_sd) = probe.optodes.X(ind_s) + eps(1);
-            probe.optodes.Y(ind_sd) = probe.optodes.Y(ind_s);
-            probe.optodes.Z(ind_sd) = probe.optodes.Z(ind_s);
-            
-            probe.optodes_registered.X(ind_sd) = probe.optodes_registered.X(ind_s) + NIRX_SD_DIST;
-            probe.optodes_registered.Y(ind_sd) = probe.optodes_registered.Y(ind_s);
-            probe.optodes_registered.Z(ind_sd) = probe.optodes_registered.Z(ind_s);
-        end
-    end
-end
 
 
 %% Now, let's get the data
