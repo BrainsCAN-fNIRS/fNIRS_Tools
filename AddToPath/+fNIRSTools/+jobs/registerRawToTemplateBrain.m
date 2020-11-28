@@ -22,10 +22,10 @@ end
 template_name = lower(template_name);
 switch template_name
     case 'colin27'
-        func = @registerToTemplateBrain_Colin27;
+        func = @registerRawToTemplateBrain_Colin27;
         
     case {'nirx' 'nirxgeom'}
-        func = @registerToTemplateBrain_NIRxGeom;
+        func = @registerRawToTemplateBrain_NIRxGeom;
         
     otherwise
         error('Unsupported template name: %s', template_name);
@@ -40,16 +40,16 @@ jobs.FunctionHandle = func;
 
 
 %% Template-Specific Calls
-function [data] = registerToTemplateBrain_Colin27(data)
+function [data] = registerRawToTemplateBrain_Colin27(data)
 func = @nirs.registration.Colin27.BEM_V2;
-data = registerToTemplateBrain_DO(data, func);
+data = registerRawToTemplateBrain_DO(data, func);
 
-function [data] = registerToTemplateBrain_NIRxGeom(data)
+function [data] = registerRawToTemplateBrain_NIRxGeom(data)
 func = @nirs.registration.NIRxGeom.BEM;
-data = registerToTemplateBrain_DO(data, func);
+data = registerRawToTemplateBrain_DO(data, func);
 
 %% General Sub-Call
-function [data] = registerToTemplateBrain_DO(data, func)
+function [data] = registerRawToTemplateBrain_DO(data, func)
 lambda = unique(data.probe.link.type);
 fwdBEM = func(lambda);
 data.probe = data.probe.register_mesh2probe(fwdBEM.mesh);
