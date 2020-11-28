@@ -1,3 +1,4 @@
+%[filepaths, exists] = fNIRSTools_bids_io_getFilepath(type, bids_info, allow_multi_select, group)
 function [filepaths, exists] = fNIRSTools_bids_io_getFilepath(type, bids_info, allow_multi_select, group)
 
 %% Use First Dataset if Group

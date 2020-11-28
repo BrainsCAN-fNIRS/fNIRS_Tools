@@ -168,6 +168,28 @@ if (bids_info.number_datasets > 1) && ~multi_select
     error('Found %d datasets but multi_select is off', bids_info.number_datasets)
 end
 
+%% Load first file and get some extra info
+
+%use raw if available (faster) else snirf
+type_found = 'raw';
+[~, exists] = fNIRSTools.bids.io.getFilepath(type_found, bids_info);
+if ~any(exists)
+    type_found = 'snirf';
+    [~, exists] = fNIRSTools.bids.io.getFilepath(type_found, bids_info);
+end
+
+%get first set of conditions in order
+if any(exists)
+    ind = find(exists, 1, 'first');
+    data = fNIRSTools.bids.io.readFile(bids_info, type_found, ind, false, false);
+    bids_info.first_condition_set = data.stimulus.keys;
+else
+    bids_info.first_condition_set = cell(0);
+end
+
+%count conditions
+bids_info.first_condition_set_count = length(bids_info.first_condition_set);
+
 
 
 

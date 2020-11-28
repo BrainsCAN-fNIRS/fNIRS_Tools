@@ -1,4 +1,4 @@
-% fNIRSTools_bids_process_runJobs(bids_info, source_type, target_type, jobs, overwrite)
+% fNIRSTools_bids_process_runJobs(bids_info, source_type, target_type, jobs, overwrite, flags)
 %
 % Runs a job set on individual runs. Existing outputs will be skipped by
 % default.
@@ -12,6 +12,7 @@
 %   flags           optional cell array of strings
 %                       decon = save subset of decon output (<1mb compared to >600mb)
 %                       group = combine runs and perform jobs on the set
+%                       group_in = read group file and write group file
 function fNIRSTools_bids_process_runJobs(bids_info, input_type, output_type, jobs, overwrite, flags)
 
 %% Defaults
@@ -61,7 +62,7 @@ end
 %% Method 1: Indiv
 
 tic
-if ~any(strcmp(flags, 'group'))
+if ~any(cellfun(@(f) any(strcmpi(f, {'group' 'group_in'})), flags))
     for i = 1:bids_info.number_datasets
         fprintf('\tSet %03d of %03d (%s)\n', i, bids_info.number_datasets, bids_info.datasets(i).full_name);
 
@@ -94,7 +95,13 @@ else
     
         %load all
         fprintf('Loading all input %s...\n', input_type);
-        inputs = fNIRSTools.bids.io.readFile(bids_info, input_type);
+        if any(strcmpi(flags, 'group_in'))
+            %read group input
+            inputs = fNIRSTools.bids.io.readFile(bids_info, input_type, nan, nan, true);
+        else
+            %read multiple indiv inputs
+            inputs = fNIRSTools.bids.io.readFile(bids_info, input_type);
+        end
         
         %process
         runSingleSet(inputs, jobs, output_type, filepath_output, flags, '');
@@ -121,7 +128,7 @@ end
 
 %if decon, save only the beta x time x cond x channel (else
 %very large files)
-if any(strcmp(flags, 'decon'))
+if any(strcmpi(flags, 'decon'))
     fprintf('%sReducing data for decon save...\n', print_prefix);
     try
         data = data.HRF;
