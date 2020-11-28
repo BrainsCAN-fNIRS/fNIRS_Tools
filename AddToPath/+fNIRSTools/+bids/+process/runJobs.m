@@ -1,4 +1,4 @@
-% fNIRSTools_bids_process_runJobs(bids_info, source_type, target_type, jobs, overwrite)
+% fNIRSTools_bids_process_runJobs(bids_info, source_type, target_type, jobs, overwrite, flags)
 %
 % Runs a job set on individual runs. Existing outputs will be skipped by
 % default.
