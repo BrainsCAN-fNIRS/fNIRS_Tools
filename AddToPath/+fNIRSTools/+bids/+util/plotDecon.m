@@ -70,21 +70,27 @@ if ~plot_oxy && ~plot_deoxy
 end
 
 
-%% Confirm Same Montage
-
-if bids_info.number_datasets > 1
-    fprintf('Checking montages...\n');
-    txt = evalc('same_montage = fNIRSTools.bids.util.checkMontages(bids_info);');
-    if ~same_montage
-        error('Datasets do not have the same montage')
-    end
-end
-    
-
 %% Load Data
 
 fprintf('Loading data...\n');
 data = fNIRSTools.bids.io.readFile(bids_info, input_suffix);
+
+
+%% Confirm Same Montage / Conditions
+
+if bids_info.number_datasets > 1
+    fprintf('Checking montages...\n');
+    txt = evalc('same_montage = fNIRSTools.bids.util.checkMontages(bids_info, false, data);');
+    if ~same_montage
+        error('Datasets do not have the same montage')
+    end
+    
+    fprintf('Checking conditions...\n');
+    txt = evalc('same_conditions = fNIRSTools.bids.util.checkConditions(bids_info, nan, data);');
+    if ~same_conditions
+        error('Datasets do not have the same conditions')
+    end
+end
 
 
 %% Handle Flexible Inputs
@@ -160,14 +166,8 @@ time_start = times(1);
 time_end = times(end);
 duration = (times(2)-times(1)) * length(times);
 
-%check that all datasets have the same conditions
-stim_ref = data(1).stimulus;
-if any(arrayfun(@(d) (d.stimulus.count ~= stim_ref.count) || any(~strcmp(d.stimulus.keys,stim_ref.keys)), data))
-    error('Datasets do not have the same conditions')
-end
-
 %check that datasets have requested conditions
-if any(cellfun(@(c) ~any(strcmp(stim_ref.keys, c)), conditions))
+if any(cellfun(@(c) ~any(strcmp(bids_info.first_condition_set, c)), conditions))
     error('Datasets do not contain all specified conditions')
 end
 
