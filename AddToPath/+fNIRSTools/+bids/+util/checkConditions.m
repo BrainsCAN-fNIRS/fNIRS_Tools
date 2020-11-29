@@ -41,7 +41,13 @@ if ~exist('data', 'var')
     end
 end
 
-conditions = arrayfun(@(f) f.stimulus.keys, data, 'UniformOutput', false);
+if any(strcmp(fields(data), 'stimulus')) %isfield doesn't work for AnalyzIR data
+    conditions = arrayfun(@(f) f.stimulus.keys, data, 'UniformOutput', false);
+elseif any(strcmp(fields(data), 'conditions')) %isfield doesn't work for AnalyzIR data
+    conditions = arrayfun(@(f) f.conditions', data, 'UniformOutput', false);
+else
+    error('Data does not contain "stimulus" or "conditions" field');
+end
 number_conditions = length(conditions);
 if number_conditions < 2
     error('Found less than 2 datasets')
