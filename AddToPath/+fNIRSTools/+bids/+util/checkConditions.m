@@ -9,7 +9,7 @@
 % Inputs:
 %   expected_conditions     {char}      default=nan         when not nan, throws an error if the condition set does not match this
 %
-%   data                    struct      no default          can optionally pass data to avoid reloading
+%   data                    [struct]    no default          can optionally pass data to avoid reloading
 %
 function [all_identical] = fNIRSTools_bids_util_checkConditions(bids_info, expected_conditions, data)
 
