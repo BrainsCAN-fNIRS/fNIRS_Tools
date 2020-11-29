@@ -19,7 +19,7 @@
 %                                                       In either case, the final matrices will be symmetrical.        
 %
 %   select_oxy_dexoy    char/nan        default=nan     Options:
-%                                                           OXY or HBO: oxy only, 
+%                                                           OXY or HBO: oxy only
 %                                                           DEOXY or HBR: deoxy only
 %                                                           SPLIT: oxy and deoxy split into two conditions
 %                                                           COMBINE: oxy and deoxy concatenated for first level correlation (default)
