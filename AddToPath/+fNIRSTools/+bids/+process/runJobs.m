@@ -88,7 +88,7 @@ if ~any(cellfun(@(f) any(strcmpi(f, {'group' 'group_in'})), flags))
 %% Method 2: Group
 else
     %output
-    filepath_output = [bids_info(1).root_directory 'derivatives' filesep sprintf('Group_%s.mat', output_type)];
+    filepath_output = [bids_info.root_directory 'derivatives' filesep sprintf('Group_%s.mat', output_type)];
     if exist(filepath_output, 'file') && ~overwrite
         error('Output already exists and overwrite is false, skipping: %s', filepath_output)
     else
