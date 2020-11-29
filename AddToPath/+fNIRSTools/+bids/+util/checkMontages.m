@@ -1,25 +1,39 @@
-% Reads all snirf files and confirms that they used the same montage
-% If "complete" is true, then all comparisons are made.
-function [all_identical] = fNIRSTools_bids_util_checkMontages(bids_info, complete)
+%[all_identical] = fNIRSTools_bids_util_checkMontages(bids_info, do_all_comparisons, data)
+%
+% Reads all snirf files (or *_RAW.mat if available) and check if they have
+% the same montage.
+% 
+% Outputs:
+%   all_identical           logical     indicates whether all datasets had the same montage
+%
+% Inputs:
+%   do_all_comparisons      logical     default=false       when true, all pairs of datasets are compared
+%   
+%   data                    struct      no default          can optionally pass data to avoid reloading
+%
+function [all_identical] = fNIRSTools_bids_util_checkMontages(bids_info, do_all_comparisons, data)
 
 %% Inputs
 
 if ~exist('complete', 'var')
-    complete = false;
+    do_all_comparisons = false;
 end
 
 %% Read Montages
 
-%if all runs have raw or HB mat, it's much faster to get montages from there
-[~,exists_raw] = fNIRSTools.bids.io.getFilepath('RAW', bids_info, true);
-if ~any(~exists_raw)
-	files = fNIRSTools.bids.io.readFile(bids_info, 'RAW');
-else
-    warning('Did not locate full set of raw mat files. Reading directly from SNIRF instead, which is slower.')
-    files = fNIRSTools.bids.io.readFile(bids_info, 'SNIRF');
+%read data if not provided
+if ~exist('data', 'var')
+    %if all runs have raw or HB mat, it's much faster to get montages from there
+    [~,exists_raw] = fNIRSTools.bids.io.getFilepath('RAW', bids_info, true);
+    if ~any(~exists_raw)
+        data = fNIRSTools.bids.io.readFile(bids_info, 'RAW');
+    else
+        warning('Did not locate full set of raw mat files. Reading directly from SNIRF instead, which is slower.')
+        data = fNIRSTools.bids.io.readFile(bids_info, 'SNIRF');
+    end
 end
 
-montages = arrayfun(@(f) f.probe, files);
+montages = arrayfun(@(f) f.probe, data);
 number_montages = length(montages);
 if number_montages < 2
     error('Found less than 2 montages')
@@ -27,7 +41,7 @@ end
 
 %% Compare
 
-if ~complete
+if ~do_all_comparisons
     fprintf('Comparing montages (reduced comparison method)...\n');
     
     montage_ref = montages(1);
@@ -86,9 +100,17 @@ if any(size(montage_source.link) ~= size(montage_target.link))
     same = false;
     return
 else
+    %check S/D index
     check = (montage_source.link.detector ~= montage_target.link.detector) | ...
-            (montage_source.link.source ~= montage_target.link.source) | ...
-            (montage_source.link.type ~= montage_target.link.type);
+            (montage_source.link.source ~= montage_target.link.source);
+    
+    %check data type
+    if isnumeric(montage_source.link.type(1))
+        check = check | (montage_source.link.type ~= montage_target.link.type);
+    else
+        check = check | ~strcmp(montage_source.link.type, montage_target.link.type);
+    end
+        
     if any(check(:))
         same = false;
         return
