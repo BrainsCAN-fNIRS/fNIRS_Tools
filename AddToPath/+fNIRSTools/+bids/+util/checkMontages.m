@@ -9,7 +9,7 @@
 % Inputs:
 %   do_all_comparisons      logical     default=false       when true, all pairs of datasets are compared
 %   
-%   data                    struct      no default          can optionally pass data to avoid reloading
+%   data                    [struct]    no default          can optionally pass data to avoid reloading
 %
 function [all_identical] = fNIRSTools_bids_util_checkMontages(bids_info, do_all_comparisons, data)
 
