@@ -100,9 +100,17 @@ if any(size(montage_source.link) ~= size(montage_target.link))
     same = false;
     return
 else
+    %check S/D index
     check = (montage_source.link.detector ~= montage_target.link.detector) | ...
-            (montage_source.link.source ~= montage_target.link.source) | ...
-            (montage_source.link.type ~= montage_target.link.type);
+            (montage_source.link.source ~= montage_target.link.source);
+    
+    %check data type
+    if isnumeric(montage_source.link.type(1))
+        check = check | (montage_source.link.type ~= montage_target.link.type);
+    else
+        check = check | ~strcmp(montage_source.link.type, montage_target.link.type);
+    end
+        
     if any(check(:))
         same = false;
         return
