@@ -15,7 +15,7 @@
 %
 %   output_suffix   char/nan        default=nan     Suffix to add to output (auto-generated if nan)
 %                   
-%   channels        [Nx2 int]/nan   default=nan     Nx2 of source/detector pairs. If NaN, selects all channels.
+%   channels        [Nx2 int]/nan   default=nan     Nx2 of source/detector pairs or SD table. If NaN, selects all channels.
 %
 %   montage_mode    logical/nan     default=true    Plot with montage view. If false, all channels are average for a single plot. (nan defaults to true)
 %
@@ -52,8 +52,10 @@ if ~exist('channels', 'var') || numel(channels) < 2
 elseif size(channels,2) > 2
     error('Invalid channels input')
 else
+    if ~istable(channels)
+        channels = array2table(channels,'VariableNames',{'source','detector'});
+    end
     %verify that these channels exist
-    channels = array2table(channels,'VariableNames',{'source','detector'});
     if any(arrayfun(@(s,d) ~any((bids_info.first_channel_set.source == s) & (bids_info.first_channel_set.detector == d)), channels.source, channels.detector))
         error('One or more specified channel does not exist in the montage') 
     end
