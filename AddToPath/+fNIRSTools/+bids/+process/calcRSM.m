@@ -14,8 +14,9 @@
 %
 %   conditions          {char}/nan      default/nan     List of conditions in order to include. If NaN, uses all conditions.
 %
-%   split            logical/nan     default=nan     If true, subject RSMs will be the average of all even dataset splits (asymmetric).
-%                                                       Otherwisw, all datasetes are combined (symmetric). NaN default to true.
+%   split               logical/nan     default=nan     If true, subject RSMs will be the average of all even dataset splits (diag != 1).
+%                                                       Otherwisw, all datasetes are combined (diag == 1). NaN defaults to true.
+%                                                       In either case, the final matrices will be symmetrical.        
 %
 %   select_oxy_dexoy    char/nan        default=nan     Options:
 %                                                           OXY or HBO: oxy only, 
