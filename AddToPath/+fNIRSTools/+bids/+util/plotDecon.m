@@ -38,10 +38,6 @@ else
     use_auto_suffix = false;
 end
 
-if ~exist('channels', 'var')
-    channels = nan;
-end
-
 if ~exist('montage_mode', 'var') || (isnumeric(montage_mode) && numel(montage_mode)==1 && isnan(montage_mode))
     montage_mode = true;
 end
@@ -50,12 +46,53 @@ if ~exist('data_types', 'var') || (isnumeric(data_types) && numel(data_types)==1
     data_types = 'both';
 end
 
-if ~exist('conditions', 'var')
-    conditions = nan;
+%channels
+if ~exist('channels', 'var') || numel(channels) < 2
+    channels = bids_info.first_channel_set;
+elseif size(channels,2) > 2
+    error('Invalid channels input')
+else
+    %verify that these channels exist
+    channels = array2table(channels,'VariableNames',{'source','detector'});
+    if any(arrayfun(@(s,d) ~any((bids_info.first_channel_set.source == s) & (bids_info.first_channel_set.detector == d)), channels.source, channels.detector))
+        error('One or more specified channel does not exist in the montage') 
+    end
+end
+number_channels = size(channels, 1);
+if ~number_channels
+    error('No channels were specified')
+end
+
+%conditions
+if ~exist('conditions', 'var') || isnumeric(conditions)
+    conditions = bids_info.first_condition_set;
+else
+    if ischar(conditions)
+        conditions = {conditions};
+    end
+    if any(cellfun(@(c) ~any(strcmp(bids_info.first_condition_set, c)), conditions))
+        error('One or more specified conditions is not present')
+    end
+end
+number_conditions = length(conditions);
+if ~number_conditions
+    error('No conditions were specified')
 end
 
 if ~exist('colours', 'var')
     colours = nan;
+end
+
+%colours
+if ~exist('colours', 'var') || ((numel(colours) == 1) && isnumeric(colours) && isnan(colours))
+    %nan = use jet(#cond)
+    colours = jet(number_conditions);
+elseif (size(colours,2) ~= 3) || (size(colours,1) ~= number_conditions)
+    error('Colours must be Nx3')
+else
+    if any((colours(:)<0) | (colours(:)>1))
+        error('Colour values must be 0-to-1 RGB')
+    end
 end
 
 
@@ -91,52 +128,6 @@ if bids_info.number_datasets > 1
         error('Datasets do not have the same conditions')
     end
 end
-
-
-%% Handle Flexible Inputs
-
-%conditions
-if ischar(conditions)
-    %if conditions is char, put in cell
-    conditions = {conditions};
-elseif ~iscell(conditions)
-    if ~isnumeric(conditions) || length(conditions)~=1 || ~isnan(conditions)
-        error('Invalid conditions input')
-    else
-        %nan = use all conditions
-        conditions = data(1).stimulus.keys;
-    end
-end
-number_conditions = length(conditions);
-if ~number_conditions
-    error('No conditions were specified')
-end
-
-%colours
-if (numel(colours) == 1) && isnumeric(colours) && isnan(colours)
-    %nan = use jet(#cond)
-    colours = jet(number_conditions);
-elseif (size(colours,2) ~= 3) || (size(colours,1) ~= number_conditions)
-    error('Colours must be Nx3')
-else
-    if any((colours(:)<0) | (colours(:)>1))
-        error('Colour values must be 0-to-1 RGB')
-    end
-end
-
-%channels
-if size(channels,2) > 2
-    error('Invalid channels input')
-elseif size(channels,2) == 2
-    %verify that these channels exist
-    if any(arrayfun(@(s,d) ~any((data(1).probe.link.source == s) & (data(1).probe.link.detector == d)), channels(:,1), channels(:,2)))
-        error('One or more specified channel does not exist in the montage') 
-    end
-else
-    %use all channels
-    channels = unique([data(1).probe.link.source data(1).probe.link.detector], 'rows');
-end
-number_channels = size(channels, 1);
 
 
 %% Check Data
@@ -195,7 +186,7 @@ for s = 1:bids_info.subject_count
                     type = ['hbr_' conditions{co}];
                 end
                 
-                ind = find((links.source == channels(ch,1)) & (links.detector == channels(ch,2)) & strcmp(links.type, type));
+                ind = find((links.source == channels.source(ch)) & (links.detector == channels.detector(ch)) & strcmp(links.type, type));
                 if length(ind) ~= 1
                     error('Unexpected error during data organization (did not find exactly one match for source+detector+condition+type)')
                 else
@@ -241,7 +232,7 @@ elseif number_channels > 1
     decon_group_95ci = permute(arrayfun(@(a,b,c) nanmean(cell2mat(decon_group_95ci(a,:,b,c)'),1), s, co, od, 'UniformOutput', false), [1 4 2 3]);
 else
     %plot single channel in single view
-    auto_suffix = sprintf('SingleChannel-S%dD%d', channels);
+    auto_suffix = sprintf('SingleChannel-S%dD%d', channels.source, channels.detector);
 end
 
 if use_auto_suffix
@@ -330,18 +321,18 @@ if montage_mode
     
     %plot channel lines
     for c = 1:number_channels
-        plot([xy_sources(channels(c,1),1) xy_detectors(channels(c,2),1)], ...
-             [xy_sources(channels(c,1),2) xy_detectors(channels(c,2),2)], ...
+        plot([xy_sources(channels.source(c),1) xy_detectors(channels.detector(c),1)], ...
+             [xy_sources(channels.source(c),2) xy_detectors(channels.detector(c),2)], ...
              ':', 'Color', COLOUT_CHANNEL);
     end
     
     %plot source/detectors
-    for s = unique(channels(:,1))'
+    for s = unique(channels.source)'
         plot(xy_sources(s,1), xy_sources(s,2), 'o', 'MarkerSize', 3, 'MarkerEdgeColor', COLOUR_SOURCE, 'MarkerFaceColor', COLOUR_SOURCE); 
         plot(xy_sources(s,1), xy_sources(s,2) + LABEL_ADJUST, '.k', 'MarkerSize', 1); %ensure axis includes text
         text(xy_sources(s,1), xy_sources(s,2) + LABEL_ADJUST, sprintf('S%02d', s), 'Color', COLOUR_SOURCE_LABEL);
     end
-    for d = unique(channels(:,2))'
+    for d = unique(channels.detector)'
         plot(xy_detectors(d,1), xy_detectors(d,2), 'o', 'MarkerSize', 3, 'MarkerEdgeColor', COLOUR_DETECTOR, 'MarkerFaceColor', COLOUR_DETECTOR); 
         plot(xy_detectors(d,1), xy_detectors(d,2) + LABEL_ADJUST, '.k', 'MarkerSize', 1); %ensure axis includes text
         text(xy_detectors(d,1), xy_detectors(d,2) + LABEL_ADJUST, sprintf('D%02d', d), 'Color', COLOUR_DETECTOR_LABEL);
@@ -350,7 +341,7 @@ if montage_mode
     %calculate channel plot centers
     xy_channel = nan(number_channels, 2);
     for c = 1:number_channels
-        xy_sd = [xy_sources(channels(c,1),:); xy_detectors(channels(c,2),:)];
+        xy_sd = [xy_sources(channels.source(c),:); xy_detectors(channels.detector(c),:)];
         center = mean(xy_sd, 1);
         
         diffs = abs(xy_channel - center);
