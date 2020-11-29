@@ -183,7 +183,7 @@ if any(exists)
     ind = find(exists, 1, 'first');
     data = fNIRSTools.bids.io.readFile(bids_info, type_found, ind, false, false);
     bids_info.first_condition_set = data.stimulus.keys;
-    bids_info.first_channel_set = unique([data.probe.link.source data.probe.link.detector],'rows');
+    bids_info.first_channel_set = unique(data.probe.link(:,1:2),'rows');
     bids_info.first_source_count = size(data.probe.srcPos, 1);
     bids_info.first_detector_count = size(data.probe.detPos, 1);
 else
