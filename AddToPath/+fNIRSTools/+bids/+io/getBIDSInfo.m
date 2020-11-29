@@ -178,17 +178,24 @@ if ~any(exists)
     [~, exists] = fNIRSTools.bids.io.getFilepath(type_found, bids_info);
 end
 
-%get first set of conditions in order
+%get info from first dataset
 if any(exists)
     ind = find(exists, 1, 'first');
     data = fNIRSTools.bids.io.readFile(bids_info, type_found, ind, false, false);
     bids_info.first_condition_set = data.stimulus.keys;
+    bids_info.first_channel_set = unique([data.probe.link.source data.probe.link.detector],'rows');
+    bids_info.first_source_count = size(data.probe.srcPos, 1);
+    bids_info.first_detector_count = size(data.probe.detPos, 1);
 else
     bids_info.first_condition_set = cell(0);
+    bids_info.first_channel_set = [];
+    bids_info.first_source_count = nan;
+    bids_info.first_detector_count = nan;
 end
 
 %count conditions
 bids_info.first_condition_set_count = length(bids_info.first_condition_set);
+bids_info.first_channel_set_count = size(bids_info.first_channel_set, 1);
 
 
 
