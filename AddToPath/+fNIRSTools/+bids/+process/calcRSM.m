@@ -97,6 +97,12 @@ fprintf('Loading data...\n');
 data_source = fNIRSTools.bids.io.readFile(bids_info, source_type);
 
 
+%% Data Has Beta
+if ~any(strcmp(fields(data_source(1)), 'beta'))
+    error('Input data does not contain "beta" field');
+end
+
+
 %% Confirm Same Montage / Conditions
 
 if bids_info.number_datasets > 1
