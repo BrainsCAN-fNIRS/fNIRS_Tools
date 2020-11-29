@@ -15,7 +15,7 @@ function [all_identical] = fNIRSTools_bids_util_checkConditions(bids_info, expec
 
 %% Inputs
 
-if exist('expected_conditions', 'var')
+if exist('expected_conditions', 'var') && ~isnumeric(expected_conditions)
     if ~iscell(expected_conditions)
         expected_conditions = {expected_conditions};
     end
