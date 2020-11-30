@@ -7,11 +7,11 @@
 %
 %   task_name           string      default=fNIRS   name of task to include in filenames
 %
-%   subject_number      int/nan     default=nan     subject to select or nan to select all
+%   subject_number      [int]/nan   default=nan     subjects to select or nan to select all
 %
-%   run_number          int/nan     default=nan     run to select or nan to select all
+%   run_number          [int]/nan   default=nan     runs to select or nan to select all
 %
-%   session_number      int/nan     default=nan     session to select or nan to select all
+%   session_number      [int]/nan   default=nan     sessions to select or nan to select all
 %
 %   multi_select        logical     default=true    allow selection of multiple datasets        
 %
@@ -78,7 +78,7 @@ bids_info.root_directory = root_directory;
 %% Select Datasets
 
 if ~isnan(subject_number)
-    subjects = {sprintf('sub-%02d', subject_number)};
+    subjects = arrayfun(@(s) sprintf('sub-%02d',s), subject_number, 'UniformOutput', false);
 else
     list = dir([bids_info.root_directory 'sub-*']);
     list = list([list.isdir]);
@@ -94,7 +94,7 @@ for sub = subjects
     fol_sub = [bids_info.root_directory sub filesep];
 
     if ~isnan(session_number)
-        sessions = {sprintf('ses-%02d', session_number)};
+        sessions = arrayfun(@(s) sprintf('ses-%02d',s), session_number, 'UniformOutput', false);
     else
         list = dir([fol_sub 'ses-*']);
         list = list([list.isdir]);
@@ -118,7 +118,7 @@ for sub = subjects
             task = task{1};
 
             if ~isnan(run_number)
-                runs = {sprintf('run-%02d', run_number)};
+                runs = arrayfun(@(r) sprintf('run-%02d',r), run_number, 'UniformOutput', false);
             else
                 list = dir([fol_ses_func sprintf('*_%s_*.snirf', task)]);
                 runs = cellfun(@(x) ['run-' x], unique(cellfun(@(x) x.run, regexp({list.name}, '_run-(?<run>\d+)_', 'names'), 'UniformOutput', false)), 'UniformOutput', false);
@@ -222,7 +222,7 @@ for type = valid_types
             any_valid = any_valid || ischar(value);
             
         case 'int'
-            any_valid = any_valid || (isnumeric(value) && ~isnan(value) && isint(value));
+            any_valid = any_valid || (isnumeric(value) && ~any(isnan(value)) && ~any(~isint(value)));
             
         case 'nan'
             any_valid = any_valid || (isnumeric(value) && isnan(value));
