@@ -247,4 +247,4 @@ function [betas] = PrepBetas(betas)
 %average across runs
 betas = nanmean(betas, 3);
 %demean across conditions within each channel (separate for oxy/deoxy)
-betas = betas - mean(betas,2);
+betas = betas - nanmean(betas,2);
