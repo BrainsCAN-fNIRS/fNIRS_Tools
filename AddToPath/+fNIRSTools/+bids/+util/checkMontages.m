@@ -15,7 +15,7 @@ function [all_identical] = fNIRSTools_bids_util_checkMontages(bids_info, do_all_
 
 %% Inputs
 
-if ~exist('complete', 'var')
+if ~exist('do_all_comparisons', 'var')
     do_all_comparisons = false;
 end
 
