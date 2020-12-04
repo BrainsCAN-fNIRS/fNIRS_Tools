@@ -45,7 +45,11 @@ end
 
 fprintf('%sReading NIRx data...\n', print_prefix);
 try
-    text = evalc('raw = nirs.io.loadNIRx(data_directory);'); %redirect messages
+    try
+        text = evalc('raw = nirs.io.loadNIRx(data_directory);'); %redirect messages
+    catch
+        text = evalc('raw = nirs.io.loadDirectory(data_directory);'); %redirect messages
+    end
     duration = raw.time(end);
 catch err
     warning('Read failed')
