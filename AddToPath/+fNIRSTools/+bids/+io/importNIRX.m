@@ -200,7 +200,7 @@ if set_conditions
     grid minor
     axis([0 duration 0 2])
     legend(plots, labels, 'TextColor', 'w', 'Location', 'EastOutside')
-    title(sprintf('Comparing Prior Conditions/Triggers to Imported Conditions\n%s', bids_info.datasets.full_name), 'Color', 'w');
+    title(sprintf('Comparing Prior Conditions/Triggers to Imported Conditions\n%s', strrep(bids_info.datasets.full_name, '_', ' ')), 'Color', 'w');
     xlabel 'Time (sec)';
     set(gca,'ytick',[0.5 1.5],'yticklabels', {'New' 'Prior'});
         
