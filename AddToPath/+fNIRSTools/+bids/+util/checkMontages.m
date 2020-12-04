@@ -65,16 +65,16 @@ else
     %figure
     fig = figure('Position', get(0,'ScreenSize'));
     set(gcf,'color','k');
-    set(gca, 'Color', 'k', 'GridColor', 'w', 'MinorGridColor', 'w', 'XColor', 'w', 'YColor', 'w');
     imagesc(same)
     axis square
     cb = colorbar;
-    set(cb, 'ytick', [0.05 0.95], 'yticklabel', {'Different' 'Same'});
+    set(cb, 'ytick', [0.05 0.95], 'yticklabel', {'Different' 'Same'}, 'Color', 'w');
     colormap([0 0 0.5; 0 0.5 0]);
     caxis([0 1]);
     set(gca, 'xtick', 0.5:1:number_montages, 'xticklabel', 1:number_montages, 'ytick', 1:number_montages, 'yticklabel', cellfun(@(x) strrep(x, '_', ''), {bids_info.datasets.full_name}, 'UniformOutput', false))
     grid on
     title('Montage Comparison', 'Color', 'white')
+    set(gca, 'Color', 'k', 'GridColor', 'w', 'MinorGridColor', 'w', 'XColor', 'w', 'YColor', 'w');
     
     filepath = fNIRSTools.bids.io.getFilepath('MONTAGE_COMPARISON_FIG', bids_info, false, true);
     fprintf('Writing: %s\n', filepath);
