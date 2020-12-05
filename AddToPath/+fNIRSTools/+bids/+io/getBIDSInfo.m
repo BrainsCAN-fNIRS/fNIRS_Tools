@@ -222,7 +222,7 @@ for type = valid_types
             any_valid = any_valid || ischar(value);
             
         case 'int'
-            any_valid = any_valid || (isnumeric(value) && ~any(isnan(value)) && ~any(~isint(value)));
+            any_valid = any_valid || (isnumeric(value) && ~any(isnan(value)) && ~any(~isinteger(value)));
             
         case 'nan'
             any_valid = any_valid || (isnumeric(value) && isnan(value));
