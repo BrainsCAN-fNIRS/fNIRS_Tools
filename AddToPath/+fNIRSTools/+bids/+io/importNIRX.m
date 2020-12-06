@@ -45,7 +45,11 @@ end
 
 fprintf('%sReading NIRx data...\n', print_prefix);
 try
-    text = evalc('raw = nirs.io.loadNIRx(data_directory);'); %redirect messages
+    try
+        text = evalc('raw = nirs.io.loadNIRx(data_directory);'); %redirect messages
+    catch
+        text = evalc('raw = nirs.io.loadDirectory(data_directory);'); %redirect messages
+    end
     duration = raw.time(end);
 catch err
     warning('Read failed')
@@ -200,7 +204,7 @@ if set_conditions
     grid minor
     axis([0 duration 0 2])
     legend(plots, labels, 'TextColor', 'w', 'Location', 'EastOutside')
-    title(sprintf('Comparing Prior Conditions/Triggers to Imported Conditions\n%s', bids_info.datasets.full_name), 'Color', 'w');
+    title(sprintf('Comparing Prior Conditions/Triggers to Imported Conditions\n%s', strrep(bids_info.datasets.full_name, '_', ' ')), 'Color', 'w');
     xlabel 'Time (sec)';
     set(gca,'ytick',[0.5 1.5],'yticklabels', {'New' 'Prior'});
         

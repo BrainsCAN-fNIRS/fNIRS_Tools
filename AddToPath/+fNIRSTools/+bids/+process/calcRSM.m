@@ -82,7 +82,7 @@ else
     end
 end
 number_conditions = length(conditions);
-if number_conditions < 2
+if (number_conditions < 2) && ~strcmp(select_oxy_dexoy, 'SPLIT')
     error('Less than 2 conditions were specified')
 end
 
