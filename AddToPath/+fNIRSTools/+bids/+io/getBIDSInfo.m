@@ -225,7 +225,7 @@ for type = valid_types
             any_valid = any_valid || (isnumeric(value) && ~any(isnan(value)) && ~any(~IsInt(value)));
             
         case 'nan'
-            any_valid = any_valid || (isnumeric(value) && isnan(value));
+            any_valid = any_valid || (isnumeric(value) && any(isnan(value)));
             
         case 'logical'
             any_valid = any_valid || islogical(value);
