@@ -239,7 +239,7 @@ if ~any_valid
 end
 
 function [isint] = IsInt(value)
-if ~isnumeric(value) || (length(value)~=1)
+if ~isnumeric(value)
     isint = false;
 else
     isint = (value == floor(value));
