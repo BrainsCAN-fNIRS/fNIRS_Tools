@@ -357,8 +357,9 @@ if montage_mode
     end
     
     %plot channels
+    xs_standard = ((times - mean(times)) / duration * PLOT_WIDTH);
     for ch = 1:number_channels
-        xs = ((times - mean(times)) / duration * PLOT_WIDTH) + xy_channel(ch,1);
+        xs = xs_standard + xy_channel(ch,1);
         y = xy_channel(ch,2);
         
         plot([xs(1) xs(end)], [y y], '-', 'Color', COLOUR_ZERO);
@@ -396,6 +397,21 @@ if montage_mode
             end
         end
     end
+    
+    %draw HRF
+    hrf = nirs.design.basis.Canonical;
+    peak_time = hrf.peakTime;
+    upshoot_time = hrf.uShootTime;
+    peak_disp = hrf.peakDisp;
+    upshoot_disp = hrf.uShootDisp;
+    ratio  = hrf.ratio;
+    values = hrf.getImpulseResponse(peak_time, peak_disp, upshoot_time, upshoot_disp, ratio, times);
+    xs = xs_standard + min(xy_channel(:,1)) - PLOT_WIDTH*1.5; 
+    y = max(xy_channel(:,2));
+    plot([xs(1) xs(end)], [y y], ':', 'Color', COLOUR_ZERO);
+    ys = y + (values / max(abs(values)) * PLOT_MAX_HEIGHT);
+    this_plot = plot(xs, ys, '-', 'Color', COLOUR_ZERO);
+    text(xs(1), y - LABEL_ADJUST, 'HRF', 'Color', COLOUR_ZERO);
     
     axis image
     axis off
