@@ -222,7 +222,7 @@ for type = valid_types
             any_valid = any_valid || ischar(value);
             
         case 'int'
-            any_valid = any_valid || (isnumeric(value) && ~any(isnan(value)) && ~any(~isinteger(value)));
+            any_valid = any_valid || (isnumeric(value) && ~any(isnan(value)) && ~any(~IsInt(value)));
             
         case 'nan'
             any_valid = any_valid || (isnumeric(value) && isnan(value));
@@ -236,4 +236,11 @@ for type = valid_types
 end
 if ~any_valid
     error('Invalid data type in: %s', field)
+end
+
+function [isint] = IsInt(value)
+if ~isnumeric(value) || (length(value)~=1)
+    isint = false;
+else
+    isint = (value == floor(value));
 end
