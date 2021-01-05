@@ -15,7 +15,7 @@ classdef setPONI < nirs.modules.AbstractModule
             if ~any(strcmp(fields(data),'stimulus'))
                 error('data structure does not contain "stimulus" field')
             else
-                ind_set = find(cellfun(@(key) any(strcmp(obj.conditions,key)), data.stimulus.keys));
+                ind_set = find(cellfun(@(key) any(strcmpi(obj.conditions,key)), data.stimulus.keys));
                 if any(ind_set)
                     values = data.stimulus.values;
                     for ind = ind_set
