@@ -2,6 +2,7 @@
 %
 % Reads all snirf files (or *_RAW.mat if available) and check if they have
 % the same conditions. Names, case, and  order must all be identical.
+% Ignores regressors of no interest.
 % 
 % Outputs:
 %   all_identical           logical     indicates whether all datasets had the same conditions
@@ -42,7 +43,7 @@ if ~exist('data', 'var')
 end
 
 if any(strcmp(fields(data), 'stimulus')) %isfield doesn't work for AnalyzIR data
-    conditions = arrayfun(@(f) f.stimulus.keys, data, 'UniformOutput', false);
+    conditions = arrayfun(@(f) getPOIs(f), data, 'UniformOutput', false);
 elseif any(strcmp(fields(data), 'conditions')) %isfield doesn't work for AnalyzIR data
     conditions = arrayfun(@(f) f.conditions', data, 'UniformOutput', false);
 else
@@ -79,3 +80,7 @@ elseif any(~cellfun(@strcmp, source, target))
 else
     same = true;
 end
+
+function [POIs] = getPOIs(data)
+ind_cond_POI = cellfun(@(x) ~x.regressor_no_interest, data.stimulus.values);
+POIs = cellfun(@(x) x.name, data.stimulus.values(ind_cond_POI), 'UniformOutput', false);

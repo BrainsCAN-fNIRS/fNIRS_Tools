@@ -42,6 +42,11 @@ output_type = upper(output_type);
 [filepaths_input,exists_input] = fNIRSTools.bids.io.getFilepath(input_type, bids_info, true);
 [filepaths_output,exists_output] = fNIRSTools.bids.io.getFilepath(output_type, bids_info, true);
 
+%if overwriting, don't count output as existing
+if strcmp(input_type,output_type)
+    warning('input_type and output_type are the same, files will be processed and overwritten!')
+    exists_output(:) = false;
+end
 
 %% Get Job Info To Display
 
