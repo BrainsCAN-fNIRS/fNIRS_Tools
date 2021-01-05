@@ -19,7 +19,7 @@ classdef setPONI < nirs.modules.AbstractModule
                 if any(ind_set)
                     values = data.stimulus.values;
                     for ind = ind_set
-                        values{ind}.regressor_no_interest = 1;
+                        values{ind}.regressor_no_interest = true;
                     end
                     data.stimulus.values = values;
                 end
