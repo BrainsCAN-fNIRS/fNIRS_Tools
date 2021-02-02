@@ -33,12 +33,21 @@ end
 %% Output Filepath
 
 %filepath
-[filepath_snirf, already_exists] = fNIRSTools.bids.io.getFilepath('SNIRF', bids_info, false);
+[filepath_snirf, exists_snirf] = fNIRSTools.bids.io.getFilepath('SNIRF', bids_info, false);
+[filepath_raw, exists_raw] = fNIRSTools.bids.io.getFilepath('RAW', bids_info, false);
 
 %already done?
-if already_exists
+if exists_snirf && exists_raw
     fprintf('%sOutput already exists, skipping import!', print_prefix);
     return
+end
+
+%delete prior if semi-complete
+if exists_snirf
+    delete(filepath_snirf);
+end
+if exists_raw
+    delete(filepath_raw);
 end
 
 %% Read Data
@@ -215,6 +224,12 @@ if set_conditions
     close(fig);
     
 end
+
+%% Save RAW
+
+fprintf('%sWriting RAW: %s\n', print_prefix, filepath_raw);
+data = raw;
+save(filepath_raw, 'data')
 
 %% Save SNIRF
 
