@@ -119,7 +119,7 @@ data = fNIRSTools.bids.io.readFile(bids_info, input_suffix);
 
 if bids_info.number_datasets > 1
     fprintf('Checking montages...\n');
-    txt = evalc('same_montage = fNIRSTools.bids.util.checkMontages(bids_info, false, data);');
+    txt = evalc('same_montage = fNIRSTools.bids.util.checkMontages(bids_info, false, data, true);');
     if ~same_montage
         error('Datasets do not have the same montage')
     end
