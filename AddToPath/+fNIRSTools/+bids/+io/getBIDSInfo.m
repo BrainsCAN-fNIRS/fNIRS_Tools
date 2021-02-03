@@ -190,6 +190,24 @@ if any(exists)
     bids_info.first_channel_set = unique(data.probe.link(:,1:2),'rows');
     bids_info.first_source_count = size(data.probe.srcPos, 1);
     bids_info.first_detector_count = size(data.probe.detPos, 1);
+    
+    %has SDC labels?
+    if any(strcmpi(data.probe.link.Properties.VariableNames, 'ShortSeperation'))
+        is_sdc = data.probe.link.ShortSeperation;
+    else
+        is_sdc = false(height(data.probe.link), 1);
+    end
+    
+    %short distance channels
+    bids_info.first_channel_set_SDC = unique(data.probe.link(is_sdc,1:2),'rows');
+    bids_info.first_source_count_SDC = length(unique(bids_info.first_channel_set_SDC.source));
+    bids_info.first_detector_count_SDC = length(unique(bids_info.first_channel_set_SDC.detector));
+    
+    %long distance channels
+    bids_info.first_channel_set_LDC = unique(data.probe.link(~is_sdc,1:2),'rows');
+    bids_info.first_source_count_LDC = length(unique(bids_info.first_channel_set_LDC.source));
+    bids_info.first_detector_count_LDC = length(unique(bids_info.first_channel_set_LDC.detector));
+    
 else
     bids_info.first_condition_set = cell(0);
     bids_info.first_channel_set = [];

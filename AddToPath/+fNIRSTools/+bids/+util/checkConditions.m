@@ -82,5 +82,10 @@ else
 end
 
 function [POIs] = getPOIs(data)
-ind_cond_POI = cellfun(@(x) ~x.regressor_no_interest, data.stimulus.values);
-POIs = cellfun(@(x) x.name, data.stimulus.values(ind_cond_POI), 'UniformOutput', false);
+if iscell(data.probe.types) && any((contains(data.probe.types, 'hbo_') | contains(data.probe.types, 'hbr_')))
+    %special case for decon data - workaround for error in data.stimulus
+    POIs = unique(strrep(strrep(data.probe.types,'hbo_',''),'hbr_',''));
+else
+    ind_cond_POI = cellfun(@(x) ~x.regressor_no_interest, data.stimulus.values);
+    POIs = cellfun(@(x) x.name, data.stimulus.values(ind_cond_POI), 'UniformOutput', false);
+end
