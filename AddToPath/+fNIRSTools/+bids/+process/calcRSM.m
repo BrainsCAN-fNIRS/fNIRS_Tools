@@ -53,7 +53,7 @@ end
 
 %channels
 if ~exist('channels', 'var') || numel(channels) < 2
-    channels = bids_info.first_channel_set;
+    channels = bids_info.first_channel_set_LDC;
 elseif size(channels,2) > 2
     error('Invalid channels input')
 else
@@ -108,7 +108,7 @@ end
 
 if bids_info.number_datasets > 1
     fprintf('Checking montages...\n');
-    txt = evalc('same_montage = fNIRSTools.bids.util.checkMontages(bids_info, false, data_source);');
+    txt = evalc('same_montage = fNIRSTools.bids.util.checkMontages(bids_info, false, data_source, true);');
     if ~same_montage
         error('Datasets do not have the same montage')
     end
@@ -117,6 +117,23 @@ if bids_info.number_datasets > 1
     txt = evalc('same_conditions = fNIRSTools.bids.util.checkConditions(bids_info, nan, data_source);');
     if ~same_conditions
         error('Datasets do not have the same conditions')
+    end
+end
+
+
+%% Compare data.variables
+
+if bids_info.number_datasets > 1
+    fprintf('Comparing variable tables...\n');
+    for col = 1:width(data_source(1).variables)
+        if iscell(data_source(1).variables{1,col})
+            has_issue = any(arrayfun(@(d) any(~cellfun(@strcmp, data_source(1).variables{:,col}, d.variables{:,col})), data_source));
+        else
+            has_issue = any(arrayfun(@(d) any(data_source(1).variables{:,col} ~= d.variables{:,col}), data_source));
+        end
+        if has_issue
+            error('Inconsistent values in variable table, column name: %s', data_source(1).variables.Properties.VariableNames{col});
+        end
     end
 end
 
