@@ -11,12 +11,18 @@
 %   
 %   data                    [struct]    no default          can optionally pass data to avoid reloading
 %
-function [all_identical] = fNIRSTools_bids_util_checkMontages(bids_info, do_all_comparisons, data)
+%   link_only               logical     default=false       when true, only the channels in probe.link will be compared
+%
+function [all_identical] = fNIRSTools_bids_util_checkMontages(bids_info, do_all_comparisons, data, link_only)
 
 %% Inputs
 
 if ~exist('do_all_comparisons', 'var')
     do_all_comparisons = false;
+end
+
+if ~exist('link_only', 'var')
+    link_only = false;
 end
 
 %% Read Montages
@@ -45,7 +51,7 @@ if ~do_all_comparisons
     fprintf('Comparing montages (reduced comparison method)...\n');
     
     montage_ref = montages(1);
-    same = [1; arrayfun(@(m) compareMontage(montage_ref, m), montages(2:end))];
+    same = [1; arrayfun(@(m) compareMontage(montage_ref, m, link_only), montages(2:end))];
     
     montage_matches_first = [{bids_info.datasets.full_name}' num2cell(same)];
     disp 'Results of comparison to first montage (1=same, 0=diff):'
@@ -57,7 +63,7 @@ else
     same = nan(number_montages,number_montages);
     for m1 = 1:number_montages
         for m2 = m1:number_montages
-            same(m1,m2) = compareMontage(montages(m1),montages(m2));
+            same(m1,m2) = compareMontage(montages(m1), montages(m2), link_only);
             same(m2,m1) = same(m1,m2);
         end
     end
@@ -90,7 +96,7 @@ end
 
 
 
-function [same] = compareMontage(montage_source, montage_target)
+function [same] = compareMontage(montage_source, montage_target, link_only)
 
 %default
 same = true;
@@ -118,11 +124,19 @@ else
 end
 
 %source positions
-if any(size(montage_source.srcPos) ~= size(montage_target.srcPos))
+if link_only
+    ind_to_check = unique(montage_source.link.source);
+    srcPos = montage_source.srcPos(ind_to_check,:);
+    trgPos = montage_target.srcPos(ind_to_check,:);
+else
+    srcPos = montage_source.srcPos;
+    trgPos = montage_target.srcPos;
+end
+if any(size(srcPos) ~= size(trgPos))
     same = false;
     return
 else
-    check = montage_source.srcPos ~= montage_target.srcPos;
+    check = srcPos ~= trgPos;
     if any(check(:))
         same = false;
         return
@@ -130,11 +144,19 @@ else
 end
 
 %detector positions
-if any(size(montage_source.detPos) ~= size(montage_target.detPos))
+if link_only
+    ind_to_check = unique(montage_source.link.detector);
+    srcPos = montage_source.detPos(ind_to_check,:);
+    trgPos = montage_target.detPos(ind_to_check,:);
+else
+    srcPos = montage_source.detPos;
+    trgPos = montage_target.detPos;
+end
+if any(size(srcPos) ~= size(trgPos))
     same = false;
     return
 else
-    check = montage_source.detPos ~= montage_target.detPos;
+    check = srcPos ~= trgPos;
     if any(check(:))
         same = false;
         return
