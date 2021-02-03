@@ -53,7 +53,7 @@ end
 
 %channels
 if ~exist('channels', 'var') || numel(channels) < 2
-    channels = bids_info.first_channel_set;
+    channels = bids_info.first_channel_set_LDC;
 elseif size(channels,2) > 2
     error('Invalid channels input')
 else
@@ -108,7 +108,7 @@ end
 
 if bids_info.number_datasets > 1
     fprintf('Checking montages...\n');
-    txt = evalc('same_montage = fNIRSTools.bids.util.checkMontages(bids_info, false, data_source);');
+    txt = evalc('same_montage = fNIRSTools.bids.util.checkMontages(bids_info, false, data_source, true);');
     if ~same_montage
         error('Datasets do not have the same montage')
     end
