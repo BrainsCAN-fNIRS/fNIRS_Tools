@@ -121,6 +121,23 @@ if bids_info.number_datasets > 1
 end
 
 
+%% Compare data.variables
+
+if bids_info.number_datasets > 1
+    fprintf('Comparing variable tables...\n');
+    for col = 1:width(data_source(1).variables)
+        if iscell(data_source(1).variables{1,col})
+            has_issue = any(arrayfun(@(d) any(~cellfun(@strcmp, data_source(1).variables{:,col}, d.variables{:,col})), data_source));
+        else
+            has_issue = any(arrayfun(@(d) any(data_source(1).variables{:,col} ~= d.variables{:,col}), data_source));
+        end
+        if has_issue
+            error('Inconsistent values in variable table, column name: %s', data_source(1).variables.Properties.VariableNames{col});
+        end
+    end
+end
+
+
 %% Prep
 
 channel_selection = arrayfun(@(s,d) any(channels.source==s & channels.detector==d), data_source(1).variables.source, data_source(1).variables.detector);
