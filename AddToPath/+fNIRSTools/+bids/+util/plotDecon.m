@@ -48,7 +48,7 @@ end
 
 %channels
 if ~exist('channels', 'var') || numel(channels) < 2
-    channels = bids_info.first_channel_set;
+    channels = bids_info.first_channel_set_LDC;
 elseif size(channels,2) > 2
     error('Invalid channels input')
 else
