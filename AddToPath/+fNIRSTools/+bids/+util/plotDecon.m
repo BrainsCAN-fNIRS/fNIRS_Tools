@@ -25,7 +25,9 @@
 %
 %   colours         [Nx3 num]/nan   default=nan     Colours for each condition. If NaN, then jet(#cond) will be used.
 %
-function [fig] = fNIRSTools_bids_util_plotDecon(bids_info, input_suffix, output_suffix, channels, montage_mode, conditions, data_types, colours)
+%   beta_range      num/nan         default=nan     Sets the min/max range of the y-axis (in beta units). If NaN, automatically select a reasonable range.
+%
+function [fig] = fNIRSTools_bids_util_plotDecon(bids_info, input_suffix, output_suffix, channels, montage_mode, conditions, data_types, colours, beta_range)
 
 %% Defaults
 
@@ -95,6 +97,11 @@ else
     if any((colours(:)<0) | (colours(:)>1))
         error('Colour values must be 0-to-1 RGB')
     end
+end
+
+%beta range
+if ~exist('beta_range', 'var')
+    beta_range = nan;
 end
 
 
@@ -271,6 +278,19 @@ end
 %   3. #cond
 %   4. 2 (deoxy/oxy)
 
+%% Auto y-thresh (if beta_range=nan and montage_mode=true)
+
+if isnan(beta_range) && montage_mode
+    if plot_eb_95ci
+        %need to fit beta+CI
+        absmaxs = cellfun(@(b,ci) nanmax(abs(b)+ci), decon_means_use, decon_95ci_use);
+    else
+        %only need to fit beta
+        absmaxs = cellfun(@(b) nanmax(abs(b)), decon_means_use);
+    end
+    beta_range = nanmean(absmaxs(:)) + (nanstd(absmaxs(:)) * 2);
+    beta_range = round(beta_range, 1);
+end
 
 %% Plot
 
@@ -365,9 +385,10 @@ if montage_mode
         plot([xs(1) xs(end)], [y y], '-', 'Color', COLOUR_ZERO);
         
         all_values = [decon_means_use{1,ch,:,:}];
-        r = range(all_values);
+%         r = range(all_values);
 %         beta_mult = PLOT_HEIGHT / r;
-        beta_mult = 0.1;
+%         beta_mult = 0.1;
+        beta_mult = PLOT_MAX_HEIGHT / (beta_range * 2);
         
         for co = 1:number_conditions
             for is_oxy = [true false]
@@ -413,6 +434,9 @@ if montage_mode
     this_plot = plot(xs, ys, '-', 'Color', COLOUR_ZERO);
     text(xs(1), y - LABEL_ADJUST, 'HRF', 'Color', COLOUR_ZERO);
     
+    %display beta range
+    text(xs(1), y + PLOT_MAX_HEIGHT + LABEL_ADJUST, sprintf('y-axis bounds +-%g', beta_range), 'Color', COLOUR_ZERO);
+    
     axis image
     axis off
     
@@ -451,6 +475,11 @@ else
     
     v = axis;
     axis([time_start time_end v(3:4)])
+    
+    if ~isnan(beta_range)
+        v = axis;
+        axis([v(1:2) -beta_range +beta_range])
+    end
     
     set(gca,'xtick',times);
     grid on
