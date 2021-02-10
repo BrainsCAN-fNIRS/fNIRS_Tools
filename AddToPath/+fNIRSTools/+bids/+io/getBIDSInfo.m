@@ -1,4 +1,4 @@
-% bids_info = fNIRSTools_bids_io_getBIDSInfo(root_directory, subject_number, run_number, task_name, session_number)
+% bids_info = fNIRSTools_bids_io_getBIDSInfo(root_directory, task_name, subject_number, run_number, session_number, multi_select)
 %
 % Returns "bids_info" structure, which is required by most functions in this package.
 %
