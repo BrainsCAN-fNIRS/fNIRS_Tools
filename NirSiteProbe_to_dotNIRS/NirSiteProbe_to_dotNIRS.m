@@ -195,8 +195,6 @@ else %if standard file optode file exist extract from the text file
 end
 
 
-
-
 %getting the right format
 optodes = [optodes(:,1),cellstr(repmat('placeholder',[size(optodes,1),1])),num2cell(zeros([size(optodes,1),1])),optodes(:,2:end),num2cell(zeros([size(optodes,1),1]))];
 
@@ -219,5 +217,54 @@ end
 fclose(fileID);
 %--------------------------------------------
 
+
+%% step7: generate the file that can be used for atlasviewer
+% Atlasviewer requires a digpts.txt file but and the 1.nirs file
+%. These need to be included in the folder to succesfully import data
+% into atlasviewer and have the probe registered to the scalp.
+
+%--------------------------------------------
+%generating the digpts.txt file
+%The fiducials are 'hardcoded'. These values are taken from nirstorm and
+%represent the fiducials from the Colin template that is used for forward
+%modeling.
+
+% in case when the ICBM template might be needed, I expect you can use the
+% coordinates below (these are the original ones for ICBM in nirsite)
+% I think atlas viewer uses these ones
+% RPA: 83.900 -16.600 -56.700 
+% Nz: 0.400 85.900 -47.600 
+% Cz: -0.461 -8.416 101.365 
+% LPA: -83.800 -18.600 -57.200 
+% Iz: 0.200 -120.500 -25.800 
+
+%formatting the data in a correct manner
+AV_NZ = {'NZ:' '0.400' '85.900' '-47.600'};
+AV_LP = {'LPA:' '-83.800' '-18.600' '-57.200'};
+AV_RP = {'RPA:' '83.900' '-16.600' '-56.700'};
+AP_CZ = {'CZ:' '-0.461' '-8.416' '101.365'};
+AP_IZ = {'IZ:' '0.200' '-120.500' '-25.800'} ;
+
+AV_fiducials = [AV_NZ;AV_LP;AV_RP;AP_CZ;AP_IZ];
+AV_optodes = optodes(:,[1,4,5,6]);
+
+AV_optodes_name = char(AV_optodes(:,1));
+AV_optodes_name = cellstr([AV_optodes_name,repmat(':',size(AV_optodes_name,1),1)]);
+AV_optodes(:,1) = AV_optodes_name;
+
+AV_all = [AV_fiducials;AV_optodes];
+
+%prep for saving
+optode_delims = '%s\t%s\t%s\t%s\n'; %only for the optodes
+
+fileID = fopen([dir_out 'digpts.txt'],'w');
+
+for L_opt = 1:size(AV_all,1) %saving the optodes to the textfile
+    %needs to be looped because this amount can vary
+    
+    printtxt = fprintf(fileID,optode_delims,string(AV_all(L_opt,:)));
+    
+end
+fclose(fileID);
 
 
