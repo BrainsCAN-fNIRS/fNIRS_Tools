@@ -1,4 +1,4 @@
-function fNIRSTools_bids_io_importNIRX(bids_info, data_directory, order_filepath, short_distance_threshold, print_prefix)
+function fNIRSTools_bids_io_importNIRX(bids_info, data_directory, order_filepath, short_distance_threshold, print_prefix, extra_func)
 
 %% Check BIDS Info
 if bids_info.number_datasets ~= 1
@@ -28,6 +28,12 @@ if exist('short_distance_threshold', 'var')
     identify_sdc = true;
 else
     identify_sdc = false;
+end
+
+if exist('extra_func', 'var')
+    do_extra_func = true;
+else
+    do_extra_func = false;
 end
 
 %% Output Filepath
@@ -88,6 +94,12 @@ if identify_sdc
     raw = job.run(raw);
 end
 
+%% Optional Extra Function
+
+if do_extra_func
+    raw = extra_func(raw);
+end
+
 
 %% Set Conditions
 
@@ -111,7 +123,8 @@ if set_conditions
     
     
     fprintf('%s\tReading order file...\n', print_prefix);
-    [~,~,xls] = xlsread(order_filepath);
+    [xls_num,~,xls] = xlsread(order_filepath);
+    xls(6:end,5) = num2cell(xls_num(5:end,5));
     
     
     fprintf('%s\tParsing start and end times...\n', print_prefix);
