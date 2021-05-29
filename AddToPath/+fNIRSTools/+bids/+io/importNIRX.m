@@ -74,6 +74,12 @@ catch err
     rethrow(err)
 end
 
+%% Optional Extra Function
+
+if do_extra_func
+    raw = extra_func(raw);
+end
+
 %% Set Run Info
 
 fprintf('%sAdding run info...\n', print_prefix);
@@ -94,13 +100,6 @@ if identify_sdc
     raw = job.run(raw);
 end
 
-%% Optional Extra Function
-
-if do_extra_func
-    raw = extra_func(raw);
-end
-
-
 %% Set Conditions
 
 if set_conditions
@@ -110,15 +109,16 @@ if set_conditions
     %identify t0, all times are seconds relative to this (first trigger, if
     %no triggers then first sample)
     fprintf('%s\tLocating relative timepoint...', print_prefix);
-    cond_is_trigger= contains(raw.stimulus.keys, 'channel_');
-    if ~any(cond_is_trigger)
+    if raw.stimulus.count > 0
+        trigger_times = cellfun(@(x) x.onset', raw.stimulus.values, 'UniformOutput', false);
+        trigger_times = [trigger_times{:}];
+        trigger_times = sort(trigger_times,'ascend');
+        t0 = trigger_times(1);
+        fprintf('found one or more trigger, using first as relative timepoint (t0 = %g)\n', t0);
+    else
         t0 = 0; %first sample
         trigger_times = [];
         fprintf('no triggers found, using first sample as relative timepoint (t0 = %g)\n', t0);
-    else
-        trigger_times = cell2mat(cellfun(@(c) c.onset', raw.stimulus.values(cond_is_trigger), 'UniformOutput', false));
-        t0 = min(trigger_times); %first trigger
-        fprintf('found one or more trigger, using first as relative timepoint (t0 = %g)\n', t0);
     end
     
     
