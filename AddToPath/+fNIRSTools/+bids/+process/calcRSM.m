@@ -213,7 +213,7 @@ disp Done.
 %%
 function [rsm] = CalcRSM(betas, split)
 if ~split
-    betas = PrepBetas(PrepBetas);
+    betas = PrepBetas(betas);
     rsm = corr(betas, 'type', 'Pearson');
 else
     %count
