@@ -74,6 +74,12 @@ catch err
     rethrow(err)
 end
 
+%% Optional Extra Function
+
+if do_extra_func
+    raw = extra_func(raw);
+end
+
 %% Set Run Info
 
 fprintf('%sAdding run info...\n', print_prefix);
@@ -93,13 +99,6 @@ if identify_sdc
     
     raw = job.run(raw);
 end
-
-%% Optional Extra Function
-
-if do_extra_func
-    raw = extra_func(raw);
-end
-
 
 %% Set Conditions
 
