@@ -1,4 +1,4 @@
-% [fig] = fNIRSTools_bids_util_plotDecon(bids_info, file_suffix, output_suffix, channels, montage_mode, conditions, data_types, colours)
+% [fig] = fNIRSTools_bids_util_plotDecon(bids_info, file_suffix, output_suffix, channels, montage_mode, conditions, data_types, colours, beta_range)
 %
 % Outputs:
 %   fig             handle          (optional) return figure handle
@@ -156,7 +156,7 @@ for i = 1:bids_info.number_datasets
 end
 
 %check same time bins in all datasets
-if bids_info.number_datasets>1 && any(any(diff([data.time]')))
+if bids_info.number_datasets>1 && any(any(diff([data.time]') > 1e-13))
     error('Datasets did not use the same time bins');
 end
 
