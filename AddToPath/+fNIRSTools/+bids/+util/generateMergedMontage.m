@@ -166,7 +166,11 @@ fid = unique(fid,'rows');
 %% Probe
 
 %signal types
-types = unique(cell2mat(arrayfun(@(x) x.probe.types, data, 'UniformOutput', false)));
+if iscell(data(1).probe.types)
+    types = data(1).probe.types;
+else
+    types = unique(cell2mat(arrayfun(@(x) x.probe.types, data, 'UniformOutput', false)));
+end
 
 %units (assume all same)
 units = data(1).probe.optodes.Units{1};
