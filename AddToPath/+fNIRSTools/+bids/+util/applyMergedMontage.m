@@ -58,7 +58,7 @@ for d = 1:bids_info.number_datasets
         data = all_data(d);
         
         %clear what we are about to reorder just to be safe
-        data.data(:) = nan;
+        data.data = nan(length(data.time) , height(montage.probe.link));
         
         %set probe
         data.probe = montage.probe;
