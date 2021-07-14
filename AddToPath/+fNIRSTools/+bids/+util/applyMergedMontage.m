@@ -101,7 +101,12 @@ for d = 1:bids_info.number_datasets
             end
             
             %find channel in old probe link
-            ind_channel = find(all_data(d).probe.link.source==ind_source & all_data(d).probe.link.detector==ind_detector & all_data(d).probe.link.type==type);
+            if iscell(type)
+                is_type = strcmpi(all_data(d).probe.link.type, type);
+            else
+                is_type = all_data(d).probe.link.type == type;
+            end
+            ind_channel = find(all_data(d).probe.link.source==ind_source & all_data(d).probe.link.detector==ind_detector & is_type);
             if length(ind_channel) ~= 1
                 continue
             end

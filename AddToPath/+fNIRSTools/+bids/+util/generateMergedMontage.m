@@ -168,8 +168,10 @@ fid = unique(fid,'rows');
 %signal types
 if iscell(data(1).probe.types)
     types = data(1).probe.types;
+    cell_type = true;
 else
     types = unique(cell2mat(arrayfun(@(x) x.probe.types, data, 'UniformOutput', false)));
+    cell_type = false;
 end
 
 %units (assume all same)
@@ -192,11 +194,18 @@ if ~isempty(fid)
 end
 
 %links
-links = table([],[],[],[],'VariableNames',{'source','detector','type','ShortSeperation'});
+if cell_type
+    links = table([],[],{},[],'VariableNames',{'source','detector','type','ShortSeperation'});
+else
+    links = table([],[],[],[],'VariableNames',{'source','detector','type','ShortSeperation'});
+end
 for s = 1:locations_count
     for d = s:locations_count
         if channels(s,d)
             for type = types'
+                if cell_type
+                    type = type{1};
+                end
                 links(end+1,:) = {s , d , type , channels_sdc(s,d)};
             end
         end
