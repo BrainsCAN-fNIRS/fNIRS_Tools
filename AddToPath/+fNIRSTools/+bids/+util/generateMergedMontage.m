@@ -76,7 +76,7 @@ data_count = numel(data);
 %% Auto Output Suffix
 
 if use_auto_suffix
-    output_suffix = sprintf('%s_MergeMontage-N%d-Thresh%g', input_suffix, numel(data), distance_threshold_2D);
+    output_suffix = sprintf('%s_MM-N%d-Thresh%g', input_suffix, numel(data), distance_threshold_2D);
     if exclude_nonuniversal_channels
         output_suffix = [output_suffix '-ExcludeNonUni'];
     end
