@@ -239,9 +239,9 @@ hold on
             if channels(i,j)
                 
                 if channels_sdc(i,j)
-                    style = '-';
-                else
                     style = ':';
+                else
+                    style = '-';
                 end
                 
                 colour_ind = 1 + round((channels_counts(i,j) - count_min) / count_range * (colours_precision - 1));
