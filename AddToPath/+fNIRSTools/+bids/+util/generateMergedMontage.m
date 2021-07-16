@@ -223,7 +223,7 @@ save(filepath_mat, 'locations', 'channels', 'channels_sdc', 'distance_threshold_
 
 fig = figure('Position', get(0,'ScreenSize'));
 
-plot3(locations3D(:,1),locations3D(:,2),locations3D(:,3),'w.')
+plot3(locations3D(:,1),locations3D(:,2),locations3D(:,3),'w.','MarkerSize',10)
 grid on
 
 count_min = min(channels_counts(channels_counts>0));
@@ -234,7 +234,7 @@ colours = [linspace(0,1,colours_precision)' linspace(0.5,0,colours_precision)' l
 
 hold on
     for i = 1:locations_count
-        text(locations3D(i,1),locations3D(i,2),locations3D(i,3),num2str(i),'Color','w');
+        text(locations3D(i,1),locations3D(i,2),locations3D(i,3),num2str(i),'Color','w','FontSize',24);
         for j = i:locations_count
             if channels(i,j)
                 
@@ -245,7 +245,7 @@ hold on
                 end
                 
                 colour_ind = 1 + round((channels_counts(i,j) - count_min) / count_range * (colours_precision - 1));
-                plot3(locations3D([i j],1),locations3D([i j],2),locations3D([i j],3),style,'Color',colours(colour_ind,:))
+                plot3(locations3D([i j],1),locations3D([i j],2),locations3D([i j],3),style,'Color',colours(colour_ind,:),'LineWidth',8)
             end
         end
     end
@@ -257,6 +257,7 @@ cb = colorbar('Color','w');
 ylabel(cb, 'Count', 'Color', 'w');
 colormap(colours)
 caxis([count_min count_max])
+view(0,45)
 
 set(gca,'Color','k')
 set(gcf,'Color', 'k')
