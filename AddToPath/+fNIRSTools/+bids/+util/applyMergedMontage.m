@@ -1,4 +1,4 @@
-% applyMergedMontage(bids_info, input_data_suffix, input_montage_suffixe, output_suffix, skip_if_exists)
+% applyMergedMontage(bids_info, input_data_suffix, input_montage_suffixe, output_suffix, skip_if_exists, fill_value)
 %
 % Inputs:
 %   bids_info                       struct          no default      bids_info structure specifying datasets to use
@@ -10,7 +10,9 @@
 %   output_suffix                   char/nan        default=nan     Suffix to add to output (defaults to input_montage_suffixe)
 %
 %   skip_if_exists                  logical         default=false   If true, skip datasets where output already exists
-function applyMergedMontage(bids_info, input_data_suffix, input_montage_suffixe, output_suffix, skip_if_exists)
+%
+%   fill_value                      numerical       default=nan     Value to fill absent channels with.
+function applyMergedMontage(bids_info, input_data_suffix, input_montage_suffixe, output_suffix, skip_if_exists, fill_value)
 
 %% Defaults
 
@@ -23,6 +25,10 @@ end
 
 if ~exist('skip_if_exists', 'var') || isempty(skip_if_exists) || isnan(skip_if_exists)
     skip_if_exists = false;
+end
+
+if ~exist('fill_value', 'var')
+    fill_value = nan;
 end
 
 %% Prep Output
@@ -58,7 +64,7 @@ for d = 1:bids_info.number_datasets
         data = all_data(d);
         
         %clear what we are about to reorder just to be safe
-        data.data = nan(length(data.time) , height(montage.probe.link));
+        data.data = ones(length(data.time) , height(montage.probe.link)) * fill_value;
         
         %set probe
         data.probe = montage.probe;
