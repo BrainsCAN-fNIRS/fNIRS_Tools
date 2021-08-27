@@ -1,4 +1,4 @@
-% bids_info = fNIRSTools_bids_io_getBIDSInfo(root_directory, task_name, subject_number, run_number, session_number, multi_select)
+% bids_info = fNIRSTools_bids_io_getBIDSInfo(root_directory, task_name, subject_number, run_number, session_number, multi_select, base_type)
 %
 % Returns "bids_info" structure, which is required by most functions in this package.
 %
@@ -15,28 +15,34 @@
 %
 %   multi_select        logical     default=true    allow selection of multiple datasets        
 %
-function [bids_info] = fNIRSTools_bids_io_getBIDSInfo(root_directory, task_name, subject_number, run_number, session_number, multi_select)
+%   base_type           char        default=raw     type to look for before using snirf
+%
+function [bids_info] = fNIRSTools_bids_io_getBIDSInfo(root_directory, task_name, subject_number, run_number, session_number, multi_select, base_type)
 
 %% Set Defaults
 
-if ~exist('subject_number', 'var')
+if ~exist('subject_number', 'var') || isempty(subject_number)
     subject_number = nan;
 end
 
-if ~exist('run_number', 'var')
+if ~exist('run_number', 'var') || isempty(run_number)
     run_number = nan;
 end
 
-if ~exist('task_name', 'var')
+if ~exist('task_name', 'var') || isempty(task_name)
     task_name = 'fNIRS';
 end
 
-if ~exist('session_number', 'var')
+if ~exist('session_number', 'var') || isempty(session_number)
     session_number = nan;
 end
 
-if ~exist('multi_select', 'var')
+if ~exist('multi_select', 'var') || isempty(multi_select)
     multi_select = true;
+end
+
+if ~exist('base_type', 'var') || isempty(base_type)
+    base_type = 'raw';
 end
 
 %% Check Values
@@ -171,7 +177,7 @@ end
 %% Load first file and get some extra info
 
 %use raw if available (faster) else snirf
-type_found = 'raw';
+type_found = base_type;
 [~, exists] = fNIRSTools.bids.io.getFilepath(type_found, bids_info);
 if ~any(exists)
     type_found = 'snirf';
