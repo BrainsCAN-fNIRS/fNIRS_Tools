@@ -75,6 +75,9 @@ for d = 1:bids_info.number_datasets
         nd = size(all_data(d).probe.detPos,1);
         old_pos = [all_data(d).probe.srcPos true(ns,1) (1:ns)'; all_data(d).probe.detPos false(nd,1) (1:nd)'];
         
+        %initialize all channels as missing
+        data.probe.link.Missing(:) = true;
+        
         %populate channel data
         for c = 1:height(data.probe.link)
             %what we're looking for in original montage (2D)
@@ -119,6 +122,9 @@ for d = 1:bids_info.number_datasets
             
             %copy channel data
             data.data(:,c) = all_data(d).data(:,ind_channel);
+            
+            %set as non-missing
+            data.probe.link.Missing(c) = false;
             
         end
         
