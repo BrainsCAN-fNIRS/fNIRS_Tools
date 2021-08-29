@@ -1,4 +1,4 @@
-classdef QTselectTimeframe < nirs.modules.AbstractModule
+classdef QTSelectTimeframe < nirs.modules.AbstractModule
     properties
         threshold_sci = 0.3;
         threshold_psp = 0.03;
@@ -6,7 +6,7 @@ classdef QTselectTimeframe < nirs.modules.AbstractModule
     end
     
     methods
-        function obj = QTselectTimeframe( prevJob )
+        function obj = QTSelectTimeframe( prevJob )
            obj.name = 'Restrict samples to the cleanest continuous subset based on SCI and PSP. Requires QT-NIRS.';
            if nargin > 0
                obj.prevJob = prevJob;
