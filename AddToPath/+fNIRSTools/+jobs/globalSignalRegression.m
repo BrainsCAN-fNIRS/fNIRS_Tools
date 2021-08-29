@@ -1,6 +1,7 @@
 classdef globalSignalRegression < nirs.modules.AbstractModule
     properties
         fields_for_exclusion = {}; %name of any logical fields to use for exclusion from global signal calculation, case-sensitive
+        normalize = true; %when calculating global signal, first normalize each signal by dividing out its variance
     end
     
     methods
@@ -58,7 +59,11 @@ classdef globalSignalRegression < nirs.modules.AbstractModule
                         select_source = select_source & has_data;
 
                         %calculte global signal
-                        global_signal = nanmean(data(i).data(:,select_source), 2);
+                        signals = data(i).data(:,select_source);
+                        if obj.normalize
+                            signals = signals ./ nanvar(signals);
+                        end
+                        global_signal = nanmean(signals, 2);
 
                         %apply regression to all signals of type
                         for ind = find(select_type)'
