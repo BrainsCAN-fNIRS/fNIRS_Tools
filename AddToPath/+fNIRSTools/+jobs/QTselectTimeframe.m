@@ -28,8 +28,8 @@ classdef QTSelectTimeframe < nirs.modules.AbstractModule
                     job = nirs.modules.QT;
                     job.windowSec = obj.windowSec;
                     job.windowOverlap = obj.windowOverlap;
-                    job.sciThreshold = threshold_sci;
-                    job.pspThreshold = threshold_psp;
+                    job.sciThreshold = obj.threshold_sci;
+                    job.pspThreshold = obj.threshold_psp;
                     
                     %calculte sci and psp with qt-nirs
                     ind_nan = isnan(data(i).data);
