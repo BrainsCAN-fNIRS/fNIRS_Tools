@@ -3,6 +3,8 @@ classdef QTExcludeChannels < nirs.modules.AbstractModule
         threshold_sci = 0.3;
         threshold_ratio = 2/3; %percent of time bins above threshold to keep channel
         fill_value = nan;
+        windowSec = 5;
+        windowOverlap = 0;
     end
     
     methods
@@ -22,10 +24,17 @@ classdef QTExcludeChannels < nirs.modules.AbstractModule
                 if ~any(strcmp(fields(data(i)),'data'))
                     error('data structure does not contain "data" field')
                 else
+                    %job
+                    job = nirs.modules.QT;
+                    job.windowSec = obj.windowSec;
+                    job.windowOverlap = obj.windowOverlap;
+                    job.sciThreshold = obj.threshold_sci;
+                    job.pspThreshold = obj.threshold_psp;
+                    
                     %calculte sci with qt-nirs
                     ind_nan = isnan(data(i).data);
                     data(i).data(ind_nan) = 1;
-                    qt = nirs.modules.QT().run(data(i));
+                    qt = job.run(data(i));
                     data(i).data(ind_nan) = nan;
                     sci = qt.qMats.sci_array;
 
