@@ -31,7 +31,7 @@ classdef globalSignalRegression < nirs.modules.AbstractModule
                     end
                     
                     %identify signals with valid data
-                    has_data = nanmax(data(i).data) > nanmin(data(i).data);
+                    has_data = (nanmax(data(i).data) > nanmin(data(i).data))';
                     
                     %for each data type...
                     number_types = length(data.probe.types);
