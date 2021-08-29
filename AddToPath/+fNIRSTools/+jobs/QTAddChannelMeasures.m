@@ -8,7 +8,7 @@ classdef QTAddChannelMeasures < nirs.modules.AbstractModule
     
     methods
         function obj = QTAddChannelMeasures( prevJob )
-           obj.name = 'Restrict samples to the cleanest continuous subset based on SCI and PSP. Requires QT-NIRS.';
+           obj.name = 'Adds the channel-wise ratios of time bins with above-threshold sci, psp, and sci&psp to the probe.link table. Requires QT-NIRS.';
            if nargin > 0
                obj.prevJob = prevJob;
            end
