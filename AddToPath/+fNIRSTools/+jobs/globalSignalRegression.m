@@ -30,6 +30,9 @@ classdef globalSignalRegression < nirs.modules.AbstractModule
                         fprintf('The following exclusion fields are available and will be applied: %s\n', sprintf('%s ', exclusion_fields{:}));
                     end
                     
+                    %identify signals with valid data
+                    has_data = nanmax(data(i).data) > nanmin(data(i).data);
+                    
                     %for each data type...
                     number_types = length(data.probe.types);
                     for type_ind = 1:number_types
@@ -52,19 +55,20 @@ classdef globalSignalRegression < nirs.modules.AbstractModule
                         end
 
                         %also exclude channels with no data
-                        select_source = select_source & (range(data(i).data,1)>0)';
+                        select_source = select_source & has_data;
 
                         %calculte global signal
                         global_signal = nanmean(data(i).data(:,select_source), 2);
 
                         %apply regression to all signals of type
                         for ind = find(select_type)'
-                            signal = data(i).data(:,ind);
-                            if ~(range(signal) > 0)
-                                continue %skip if no data
+                            if ~has_data(ind)
+                                continue;
+                            else
+                                signal = data(i).data(:,ind);
+                                [~,~,residual] = regress(signal, global_signal);
+                                data(i).data(:,ind) = residual;
                             end
-                            [~,~,residual] = regress(signal, global_signal);
-                            data(i).data(:,ind) = residual;
                         end
 
                     end
