@@ -3,8 +3,9 @@ classdef QTSelectTimeframe < nirs.modules.AbstractModule
         threshold_sci = 0.3;
         threshold_psp = 0.03;
         duration_sec = 180;
-        windowSec = 5;
-        windowOverlap = 0;
+        window_sec = 5;
+        window_overlap = 0;
+        cardiac_freq = [0.5 2.5];
     end
     
     methods
@@ -26,8 +27,9 @@ classdef QTSelectTimeframe < nirs.modules.AbstractModule
                 else
                     %job
                     job = nirs.modules.QT;
-                    job.windowSec = obj.windowSec;
-                    job.windowOverlap = obj.windowOverlap;
+                    job.windowSec = obj.window_sec;
+                    job.windowOverlap = obj.window_overlap;
+                    job.fCut = obj.cardiac_freq;
                     
                     %calculte sci and psp with qt-nirs
                     ind_nan = isnan(data(i).data);
