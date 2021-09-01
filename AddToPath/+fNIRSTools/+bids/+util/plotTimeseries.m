@@ -73,7 +73,7 @@ for ds = 1:bids_info.number_datasets
     %count data types in each file
     data_types_count = arrayfun(@(d) length(d.probe.types), data);
     data_types_max = max(data_types_count);
-    number_rows = data_types_max * 2;
+    number_rows = (data_types_max * 2) + 1;
     
     %
     clf
@@ -141,6 +141,17 @@ for ds = 1:bids_info.number_datasets
             axis_max = nanmax(nanmax(power(f>(freq_range_use(1)+r) & f<(freq_range_use(end)-r) , :)));
             axis([freq_range_use 0 axis_max])
         end
+        
+        %correlation figure
+        [~,order] = sort(data(input_type).probe.link.type);
+        corrs = corr(data(input_type).data(:,order));
+        ind = (input_type) + (data_types_count(input_type)*number_input_types*2);
+        subplot(number_rows, number_input_types, ind)
+        imagesc(corrs)
+        colorbar;
+        caxis([-1 +1]);
+        axis square
+        axis off
     end
     
     %main title
