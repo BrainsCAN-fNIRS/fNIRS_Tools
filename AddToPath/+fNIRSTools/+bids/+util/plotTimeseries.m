@@ -134,11 +134,11 @@ for ds = 1:bids_info.number_datasets
             v = axis;
             if isempty(freq_range)
                 freq_range_use = [f(1) f(end)];
-                axis_max = nanmax(nanmax(power(f>(f(1)+1) & f<(f(end)-1) , :)));
             else
                 freq_range_use = freq_range;
-                axis_max = v(4);
             end
+            r = range(freq_range_use)*.05;
+            axis_max = nanmax(nanmax(power(f>(freq_range_use(1)+r) & f<(freq_range_use(end)-r) , :)));
             axis([freq_range_use 0 axis_max])
         end
     end
