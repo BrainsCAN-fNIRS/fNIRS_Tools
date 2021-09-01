@@ -1,4 +1,4 @@
-% fNIRSTools_bids_util_plotTimeseries(bids_info, input_suffixes, output_suffix, labels, normalize, freq_range)
+% fNIRSTools_bids_util_plotTimeseries(bids_info, input_suffixes, output_suffix, labels, normalize, freq_range, average_freq)
 %
 % Inputs:
 %   bids_info       struct          no default      bids_info structure specifying datasets to use
@@ -18,7 +18,9 @@
 %
 %   freq_range      [# #]           default=[]      Frequency range to display (defaults to full)
 %
-function fNIRSTools_bids_util_plotTimeseries(bids_info, input_suffixes, output_suffix, labels, normalize, freq_range)
+%   average_freq    logical         default=false   If true, frequency plots will display the average across channels instead.
+%
+function fNIRSTools_bids_util_plotTimeseries(bids_info, input_suffixes, output_suffix, labels, normalize, freq_range, average_freq)
 
 %% Inputs
 
@@ -49,6 +51,10 @@ end
 
 if ~exist('freq_range', 'var')
     freq_range = [];
+end
+
+if ~exist('average_freq', 'var') || isempty(average_freq)
+    average_freq = false;
 end
 
 %% Output Folder
@@ -114,6 +120,10 @@ for ds = 1:bids_info.number_datasets
             fs = data(input_type).Fs;
             f = (0:length(y)-1)*fs/length(y);   
             power = abs(y);
+            if average_freq
+                f = f(1,:);
+                power = nanmean(power,2);
+            end
             
             %draw frequency
             ind = ind + number_input_types;
