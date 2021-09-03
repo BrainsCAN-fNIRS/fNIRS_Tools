@@ -61,8 +61,6 @@ classdef QTSelectTimeframe < nirs.modules.AbstractModule
                         bins_selected = bin_start:(bin_start+bins_to_select - 1);
                         selection_value(bin_start) = sum(bin_value(bins_selected));
                     end
-                    
-                    save
 
                     %select best timeframe
                     [~,best_bin_start] = max(selection_value);
