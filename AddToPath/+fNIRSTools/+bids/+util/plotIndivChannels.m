@@ -46,25 +46,33 @@ for ds = 1:bids_info.number_datasets
     else
         ncol = nrow;
     end
+    nrow = nrow + 2;
+    
+    %clear
+    clf
+    
+    %draw all channels together
+    subplot(nrow,ncol,[1 ncol*2]);
+    plot(data.data);
+    xlim([data.time(1) data.time(end)])
     
     %add each channels
-    clf
     for c = 1:number_channels
-        subplot(nrow,ncol,c);
+        subplot(nrow,ncol,(ncol*2)+c);
         ind = find((data.probe.link.source==sd(c,1)) & (data.probe.link.detector==sd(c,2)));
         plot(data.data(:,ind));
+        xlim([data.time(1) data.time(end)])
         
         types = data.probe.link.type(ind);
         if ~ischar(types)
             types = arrayfun(@num2str, types, 'UniformOutput', false);
         end
-        legend(types)
         
         title(sprintf('S%d-D%d (index: %s)', sd(c,1), sd(c,2), num2str(ind')));
     end
     
     %main title
-    sgtitle(bids_info.datasets(ds).full_name);
+    sgtitle(strrep(bids_info.datasets(ds).full_name,'_','\_'));
     
     %save
     saveas(fig, [directory bids_info.datasets(ds).full_name output_suffix '.png']);
