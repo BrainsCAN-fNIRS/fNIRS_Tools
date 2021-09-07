@@ -53,14 +53,14 @@ for ds = 1:bids_info.number_datasets
     
     %draw all channels together
     subplot(nrow,ncol,[1 ncol*2]);
-    plot(data.data);
+    plot(data.time,data.data);
     xlim([data.time(1) data.time(end)])
     
     %add each channels
     for c = 1:number_channels
         subplot(nrow,ncol,(ncol*2)+c);
         ind = find((data.probe.link.source==sd(c,1)) & (data.probe.link.detector==sd(c,2)));
-        plot(data.data(:,ind));
+        plot(data.time,data.data(:,ind));
         xlim([data.time(1) data.time(end)])
         
         types = data.probe.link.type(ind);
