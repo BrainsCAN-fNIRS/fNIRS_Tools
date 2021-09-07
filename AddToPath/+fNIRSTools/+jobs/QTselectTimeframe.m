@@ -45,7 +45,7 @@ classdef QTSelectTimeframe < nirs.modules.AbstractModule
 
                     %find bins above threshold
                     sci_at_thresh = sci >= obj.threshold_sci;
-                    psp_at_thresh = sci >= obj.threshold_psp;
+                    psp_at_thresh = psp >= obj.threshold_psp;
 
                     %calculate quality value at each bin
                     bin_value = sum(sci_at_thresh + psp_at_thresh, 1);
