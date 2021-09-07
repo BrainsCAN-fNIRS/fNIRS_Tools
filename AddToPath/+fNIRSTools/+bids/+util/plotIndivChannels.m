@@ -1,4 +1,4 @@
-% fNIRSTools_bids_util_plotIndivChannels(bids_info, input_suffixes, output_suffix)
+% fNIRSTools_bids_util_plotIndivChannels(bids_info, input_suffix, output_suffix)
 %
 % Inputs:
 %   bids_info       struct          no default      bids_info structure specifying datasets to use
@@ -8,10 +8,10 @@
 %                                                       3. Multiple datasets from multiple participants to plot mean and 95%CI of participant means
 %                                                           (weight by participant, not by dataset)
 %
-%   input_suffixes  {char}          no default      Suffixes for reading data file sets
+%   input_suffix    char            no default      Suffix for reading data
 %
-%   output_suffix   char/nan        default=nan     Suffix to add to output (no suffix if nan)
-function plotIndivChannels(bids_info, input_suffixes, output_suffix)
+%   output_suffix   char/nan        default=nan     Suffix to add to output (defaults to the input_suffix)
+function plotIndivChannels(bids_info, input_suffix, output_suffix)
 
 %% Defaults
 
@@ -19,7 +19,7 @@ if ~exist('output_suffix', 'var') || isempty(output_suffix)
     output_suffix = nan;
 end
 if isnumeric(output_suffix) && numel(output_suffix)==1 && isnan(output_suffix)
-    output_suffix = '';
+    output_suffix = input_suffix;
 end
 
 %% Output Folder
@@ -33,7 +33,7 @@ end
 fig = figure('Position', get(0,'ScreenSize'));
 for ds = 1:bids_info.number_datasets
     %load
-    data = fNIRSTools.bids.io.readFile(bids_info, input_suffixes, ds);
+    data = fNIRSTools.bids.io.readFile(bids_info, input_suffix, ds);
     
     %channels
     sd = unique(data.probe.link{:,1:2}, 'rows');
