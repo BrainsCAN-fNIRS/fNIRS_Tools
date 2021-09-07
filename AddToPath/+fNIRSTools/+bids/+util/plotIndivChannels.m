@@ -1,4 +1,4 @@
-% fNIRSTools_bids_util_plotIndivChannels(bids_info, input_suffix, output_suffix)
+% fNIRSTools_bids_util_plotIndivChannels(bids_info, input_suffix, output_suffix, normalize)
 %
 % Inputs:
 %   bids_info       struct          no default      bids_info structure specifying datasets to use
@@ -11,7 +11,9 @@
 %   input_suffix    char            no default      Suffix for reading data
 %
 %   output_suffix   char/nan        default=nan     Suffix to add to output (defaults to the input_suffix)
-function plotIndivChannels(bids_info, input_suffix, output_suffix)
+%
+%   normalize       logical         default=false   Normalizes timeseries by their variance
+function plotIndivChannels(bids_info, input_suffix, output_suffix, normalize)
 
 %% Defaults
 
@@ -20,6 +22,10 @@ if ~exist('output_suffix', 'var') || isempty(output_suffix)
 end
 if isnumeric(output_suffix) && numel(output_suffix)==1 && isnan(output_suffix)
     output_suffix = input_suffix;
+end
+
+if ~exist('normalize', 'var') || isempty(normalize)
+    normalize = false;
 end
 
 %% Output Folder
@@ -34,6 +40,13 @@ fig = figure('Position', get(0,'ScreenSize'));
 for ds = 1:bids_info.number_datasets
     %load
     data = fNIRSTools.bids.io.readFile(bids_info, input_suffix, ds);
+    name = strrep(bids_info.datasets(ds).full_name,'_','\_');
+    
+    %normalize?
+    if normalize
+        data.data = data.data ./ nanvar(data.data);
+        name = [name ' (normalized)'];
+    end
     
     %channels
     sd = unique(data.probe.link{:,1:2}, 'rows');
@@ -64,7 +77,7 @@ for ds = 1:bids_info.number_datasets
         xlim([data.time(1) data.time(end)])
         
         types = data.probe.link.type(ind);
-        if ~ischar(types)
+        if ~iscell(types)
             types = arrayfun(@num2str, types, 'UniformOutput', false);
         end
         
@@ -72,7 +85,7 @@ for ds = 1:bids_info.number_datasets
     end
     
     %main title
-    sgtitle(strrep(bids_info.datasets(ds).full_name,'_','\_'));
+    sgtitle(name);
     
     %save
     saveas(fig, [directory bids_info.datasets(ds).full_name output_suffix '.png']);
