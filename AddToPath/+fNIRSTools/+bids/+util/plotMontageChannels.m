@@ -23,6 +23,9 @@ end
 if isnumeric(output_suffix) && numel(output_suffix)==1 && isnan(output_suffix)
     output_suffix = input_suffix;
 end
+if output_suffix(1) ~= '_'
+    output_suffix = ['_' output_suffix];
+end
 
 if ~exist('normalize', 'var') || isempty(normalize)
     normalize = false;
@@ -38,17 +41,17 @@ end
 %% Constants
 colour_source = [1 0 0];
 colour_detector = [0.25 0.25 1];
-colour_channel = [0.1 0.1 0.1];
+colour_channel = [0.2 0.2 0.2];
 
 x_ratio = 0.7;
-y_ratio = 0.3;
+y_ratio = 0.25;
 
 %% Run Each
 fig = figure('Position', get(0,'ScreenSize'));
 for ds = 1:bids_info.number_datasets
     %load
     data = fNIRSTools.bids.io.readFile(bids_info, input_suffix, ds);
-    name = strrep(bids_info.datasets(ds).full_name,'_','\_');
+    name = strrep([bids_info.datasets(ds).full_name output_suffix],'_','\_');
     
     %normalize?
     if normalize
