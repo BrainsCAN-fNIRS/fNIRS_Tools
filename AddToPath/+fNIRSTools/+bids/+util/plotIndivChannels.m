@@ -23,6 +23,9 @@ end
 if isnumeric(output_suffix) && numel(output_suffix)==1 && isnan(output_suffix)
     output_suffix = input_suffix;
 end
+if output_suffix(1)~='_';
+    output_suffix = ['_' output_suffix];
+end
 
 if ~exist('normalize', 'var') || isempty(normalize)
     normalize = false;
@@ -40,7 +43,7 @@ fig = figure('Position', get(0,'ScreenSize'));
 for ds = 1:bids_info.number_datasets
     %load
     data = fNIRSTools.bids.io.readFile(bids_info, input_suffix, ds);
-    name = strrep(bids_info.datasets(ds).full_name,'_','\_');
+    name = strrep([bids_info.datasets(ds).full_name output_suffix],'_','\_');
     
     %normalize?
     if normalize
@@ -87,7 +90,23 @@ for ds = 1:bids_info.number_datasets
     %main title
     sgtitle(name);
     
+    %image of figure
+    F = getframe(gcf);
+    img = F.cdata;
+    
+    %invert
+    img = 255 - img;
+
+    %remove whitespace
+    fgd = mean(img - img(1,1,:), 3) > 20;
+    x = find(any(fgd,1));
+    y = find(any(fgd,2));
+    img = img( (y(1)-20) : (y(end)+20) , (x(1)-20) : (x(end)+20) , :);
+
     %save
-    saveas(fig, [directory bids_info.datasets(ds).full_name output_suffix '.png']);
+    imwrite(img, [directory bids_info.datasets(ds).full_name output_suffix '.png']);
+    
+%     %save
+%     saveas(fig, [directory bids_info.datasets(ds).full_name output_suffix '.png']);
 end
 close(fig);
