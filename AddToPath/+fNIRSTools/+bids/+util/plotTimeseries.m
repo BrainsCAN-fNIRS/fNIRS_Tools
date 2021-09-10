@@ -52,6 +52,9 @@ end
 if ~exist('freq_range', 'var')
     freq_range = [];
 end
+if ~iscell(freq_range)
+    freq_range = repmat({freq_range}, [1 number_input_types]);
+end
 
 if ~exist('average_freq', 'var') || isempty(average_freq)
     average_freq = false;
@@ -73,7 +76,7 @@ for ds = 1:bids_info.number_datasets
     %count data types in each file
     data_types_count = arrayfun(@(d) length(d.probe.types), data);
     data_types_max = max(data_types_count);
-    number_rows = (data_types_max * 2) + 1;
+    number_rows = (data_types_max * 2) + 2;
     
     %
     clf
@@ -132,10 +135,10 @@ for ds = 1:bids_info.number_datasets
             xlabel('Frequency (Hz)');
             ylabel('Power');
             v = axis;
-            if isempty(freq_range)
+            if isempty(freq_range{input_type})
                 freq_range_use = [f(1) f(end)];
             else
-                freq_range_use = freq_range;
+                freq_range_use = freq_range{input_type};
             end
             r = range(freq_range_use)*.05;
             axis_max = nanmax(nanmax(power(f>(freq_range_use(1)+r) & f<(freq_range_use(end)-r) , :)));
@@ -144,21 +147,36 @@ for ds = 1:bids_info.number_datasets
         
         %correlation figure
         [~,order] = sort(data(input_type).probe.link.type);
+        
+        types = data(input_type).probe.link.type(order);
+        if isnumeric(types)
+            types = arrayfun(@num2str, types, 'UniformOutput', false);
+        end
+        unique_types = unique(types);
+        label_inds = cellfun(@(t) find(strcmp(types,t),1,'first'), unique_types);
+        
         corrs = corr(data(input_type).data(:,order));
         ind = (input_type) + (data_types_count(input_type)*number_input_types*2);
+        ind = [ind (ind+number_input_types)];
         subplot(number_rows, number_input_types, ind)
         imagesc(corrs)
-        colorbar;
-        caxis([-1 +1]);
+        cb = colorbar;
+%         ylabel(cb, 'Correlation')
         axis square
-        axis off
+        title('Correlations','FontSize',10)
+%         axis off
+        set(gca,'ytick',label_inds,'yticklabel',unique_types,'xtick',[])
+        
+        cm = [1 1 1; parula];
+        colormap(cm);
+        caxis([-1.05 +1]);
     end
     
     %main title
     t = strrep(bids_info.datasets(ds).full_name,'_','\_');
-    if ~isempty(freq_range)
-        t = sprintf('%s (%g to %g Hz)', t, freq_range_use);
-    end
+%     if ~isempty(freq_range)
+%         t = sprintf('%s (%g to %g Hz)', t, freq_range_use);
+%     end
     sgtitle(t);
     
     %save
