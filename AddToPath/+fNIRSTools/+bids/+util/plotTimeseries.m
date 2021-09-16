@@ -16,7 +16,7 @@
 %
 %   normalize       [logical]       default=false   Flag to normalize each input set by its variance
 %
-%   freq_range      [# #]           default=[]      Frequency range to display (defaults to full)
+%   freq_range      {[# #]}         default=[]      Frequency range to display. Can be set for each series with a cell array. (defaults to full)
 %
 %   average_freq    logical         default=false   If true, frequency plots will display the average across channels instead.
 %
