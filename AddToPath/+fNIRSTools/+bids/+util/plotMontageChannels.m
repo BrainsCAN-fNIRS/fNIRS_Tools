@@ -43,11 +43,12 @@ colour_source = [1 0 0];
 colour_detector = [0.25 0.25 1];
 colour_channel = [0.2 0.2 0.2];
 
-x_ratio = 0.7;
+x_ratio = 0.5;
 y_ratio = 0.25;
 
 %% Run Each
-fig = figure('Position', get(0,'ScreenSize'));
+screen_size = get(0,'ScreenSize');
+fig = figure('Position', screen_size);
 for ds = 1:bids_info.number_datasets
     %load
     data = fNIRSTools.bids.io.readFile(bids_info, input_suffix, ds);
@@ -71,8 +72,19 @@ for ds = 1:bids_info.number_datasets
     type_colours = jet(max([4 length(data.probe.types)]));
     type_colours = type_colours(end:-1:1,:);
     
+    %determine subplots
+    screen_width = range(screen_size([1 3])) + 1;
+    screen_height = range(screen_size([2 4])) + 1;
+    screen_ratio = screen_width / screen_height;
+    nrow = 100;
+    ncol = round(nrow * screen_ratio);
+    nrow_top = max(1, floor(nrow/10));
+    ncell_top_end = nrow_top * ncol;
+    ncell_bot_start = ncell_top_end + (ncol*5) + 1;
+    ncell = nrow * ncol;
+    
     %draw all channels together
-    subplot(6,6,[1 12]);
+    subplot(nrow,ncol,[1 ncell_top_end]);
     plot(data.time,data.data);
     xlim([data.time(1) data.time(end)])
     xlabel('Time (sec)')
@@ -80,20 +92,25 @@ for ds = 1:bids_info.number_datasets
     set(gca, 'Color', 'k', 'GridColor', 'w', 'MinorGridColor', 'w', 'XColor', 'w', 'YColor', 'w');
 
     %draw montage view
-    subplot(6,6,[13 36]);
+    subplot(nrow,ncol,[ncell_bot_start ncell]);
     set(gca, 'Color', 'k', 'GridColor', 'w', 'MinorGridColor', 'w', 'XColor', 'w', 'YColor', 'w');
+    
+    %scale positions to match distances
+    dist_pos = pdist([data.probe.srcPos(data.probe.link.source(1),:); data.probe.detPos(data.probe.link.detector(1),:)]);
+    dist_actual = data.probe.distances(1);
+    scale_pos = dist_actual / dist_pos;
+    srcPos = data.probe.srcPos * scale_pos;
+    detPos = data.probe.detPos * scale_pos;
     
     %start hold
     hold on
     
-    %draw source/detectors
-    for s = 1:size(data.probe.srcPos,1)
-        plot(data.probe.srcPos(s,1),data.probe.srcPos(s,2),'.','Color',colour_source)
-        text(data.probe.srcPos(s,1),data.probe.srcPos(s,2),sprintf('S%d',s),'Color',colour_source)
+    %draw channel connections
+    for s = 1:size(srcPos,1)
+        plot(srcPos(s,1),srcPos(s,2),'.','Color',colour_source)
     end
-    for d = 1:size(data.probe.detPos,1)
-        plot(data.probe.detPos(d,1),data.probe.detPos(d,2),'.','Color',colour_detector)
-        text(data.probe.detPos(d,1),data.probe.detPos(d,2),sprintf('D%d',d),'Color',colour_detector)
+    for d = 1:size(detPos,1)
+        plot(detPos(d,1),detPos(d,2),'.','Color',colour_detector)
     end
     
     %distances
@@ -102,12 +119,12 @@ for ds = 1:bids_info.number_datasets
     plot_height = mean_dist * y_ratio;
     template_x = linspace(-plot_width/2, +plot_width/2, length(data.time));
     
-    %draw channels
+    %draw channel plots
     for c = 1:number_channels
         s = sd(c,1);
         d = sd(c,2);
-        xy_s = data.probe.srcPos(s,1:2);
-        xy_d = data.probe.detPos(d,1:2);
+        xy_s = srcPos(s,1:2);
+        xy_d = detPos(d,1:2);
         xy_c = mean([xy_s; xy_d]);
         plot([xy_s(1) xy_d(1)], [xy_s(2) xy_d(2)], ':', 'Color', colour_channel);
         
@@ -123,10 +140,19 @@ for ds = 1:bids_info.number_datasets
         end
     end
     
+    %draw source/detectors labels
+    for s = 1:size(srcPos,1)
+        text(srcPos(s,1),srcPos(s,2),sprintf('S%d',s),'Color',colour_source)
+    end
+    for d = 1:size(detPos,1)
+        text(detPos(d,1),detPos(d,2),sprintf('D%d',d),'Color',colour_detector)
+    end
+    
     %end hold
     hold off
     
     %no axis on montage view
+    axis square
     axis off
 
     %main title
