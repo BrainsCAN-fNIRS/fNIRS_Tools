@@ -1,11 +1,11 @@
-classdef calculateSNR < nirs.modules.AbstractModule
+classdef SNRCalculatePerSignal < nirs.modules.AbstractModule
 %THIS HAS TO BE RUN ON THE RAW DATA (BEFORE RESAMPLING, OPTICAL DENSITY AND MBLL)
 
     properties
     end
     
     methods
-        function obj = calculateSNR( prevJob )
+        function obj = SNRCalculatePerSignal( prevJob )
            obj.name = 'calculate SNR';
            if nargin > 0
                obj.prevJob = prevJob;

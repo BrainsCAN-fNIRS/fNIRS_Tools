@@ -1,4 +1,4 @@
-classdef flagNoisyChannels < nirs.modules.AbstractModule
+classdef SNRFlagNoisyChannels < nirs.modules.AbstractModule
 %Flagging noisy channels based on an SNR threshold
 %NOTE THAT THIS SCRIPT IS MADE TO ONLY WORK ON AVERAGED SNR VALUES
 % it could technically work on seperate values as well (e.g. on wavelengths not hbO)
@@ -14,8 +14,8 @@ classdef flagNoisyChannels < nirs.modules.AbstractModule
     end
     
     methods
-        function obj = flagNoisyChannels( prevJob )
-           obj.name = 'flag noisy channels';
+        function obj = SNRFlagNoisyChannels( prevJob )
+           obj.name = 'flag noisy channels following on SNRAveragePerChannel';
            if nargin > 0
                obj.prevJob = prevJob;
            end

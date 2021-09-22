@@ -1,15 +1,15 @@
-classdef averageSNR < nirs.modules.AbstractModule
+classdef SNRAveragePerChannel < nirs.modules.AbstractModule
 %'channelwise' averaging of the SNR 
 %as SNR is calculated on the raw data (before OD and MBLL) this data is
 %technically dimensionless
-%this script can also only be run after calculateSNR
+%this script can also only be run after SNRCalculatePerSignal
 
     properties
     end
     
     methods
-        function obj = averageSNR( prevJob )
-           obj.name = 'average SNR for wavelengths per SD pair';
+        function obj = SNRAveragePerChannel( prevJob )
+           obj.name = 'average SNR for wavelengths per SD pair following SNRCalculatePerSignal';
            if nargin > 0
                obj.prevJob = prevJob;
            end

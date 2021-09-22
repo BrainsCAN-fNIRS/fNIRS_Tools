@@ -1,4 +1,4 @@
-classdef noisy2nan < nirs.modules.AbstractModule
+classdef SNRSetNoisy2NaN < nirs.modules.AbstractModule
 %Noisy channels can be made NaN after applying optical density and MBLL.
 % So this script follows after flagNoisyChannels before preprocessing,
 % followed by preproccessing and then applying noisy2nan on MBLL data
@@ -7,8 +7,8 @@ classdef noisy2nan < nirs.modules.AbstractModule
     end
     
     methods
-        function obj = noisy2nan( prevJob )
-           obj.name = 'noisy channels to nan values';
+        function obj = SNRSetNoisy2NaN( prevJob )
+           obj.name = 'sets noisy channels (as determined by SNRFlagNoisyChannels) to nan values';
            if nargin > 0
                obj.prevJob = prevJob;
            end
