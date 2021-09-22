@@ -1,4 +1,4 @@
-% [fig] = fNIRSTools_bids_util_plotDecon(bids_info, file_suffix, output_suffix, channels, montage_mode, conditions, data_types, colours, beta_range)
+% [fig] = fNIRSTools_bids_util_plotDecon(bids_info, input_suffix, output_suffix, channels, montage_mode, conditions, data_types, colours, beta_range)
 %
 % Outputs:
 %   fig             handle          (optional) return figure handle

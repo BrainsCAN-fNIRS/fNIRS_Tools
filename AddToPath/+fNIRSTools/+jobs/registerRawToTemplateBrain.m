@@ -26,6 +26,9 @@ switch template_name
         
     case {'nirx' 'nirxgeom'}
         func = @registerRawToTemplateBrain_NIRxGeom;
+		
+	case 'nirx_colin'
+		func = @registerRawToTemplateBrain_NIRxGeomColin;
         
     otherwise
         error('Unsupported template name: %s', template_name);
@@ -46,6 +49,10 @@ data = registerRawToTemplateBrain_DO(data, func);
 
 function [data] = registerRawToTemplateBrain_NIRxGeom(data)
 func = @nirs.registration.NIRxGeom.BEM;
+data = registerRawToTemplateBrain_DO(data, func);
+
+function [data] = registerRawToTemplateBrain_NIRxGeomColin(data)
+func = @nirs.registration.NIRxGeom.Colin.mesh;
 data = registerRawToTemplateBrain_DO(data, func);
 
 %% General Sub-Call

@@ -18,7 +18,11 @@ classdef bandpassFilter < nirs.modules.AbstractModule
             else
                 % for each file
                 for i = 1:numel(data)
+                    invalid_data = isnan(data(i).data) | (data(i).data == 0);
+                    empty_channel = ~any(~invalid_data,1); 
+                    data(i).data(:,empty_channel) = 0;
                     data(i).data = bandpass(data(i).data, obj.passbandFrequencies, data(i).Fs);
+                    data(i).data(:,empty_channel) = nan;
                 end
             end
         end
