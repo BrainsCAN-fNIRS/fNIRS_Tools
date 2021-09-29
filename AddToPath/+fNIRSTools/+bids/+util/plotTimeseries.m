@@ -99,7 +99,7 @@ for ds = 1:bids_info.number_datasets
             %prep timeseries
             timeseries = signals;
             if normalize(input_type)
-                timeseries = timeseries ./ nanvar(timeseries);
+                timeseries = (timeseries - nanmean(timeseries)) ./ nanstd(timeseries);
             end
             
             %draw timeseries
