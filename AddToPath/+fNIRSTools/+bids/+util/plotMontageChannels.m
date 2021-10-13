@@ -56,7 +56,7 @@ for ds = 1:bids_info.number_datasets
     
     %normalize?
     if normalize
-        data.data = data.data ./ nanvar(data.data);
+        data.data = (data.data - nanmean(data.data,1)) ./ nanstd(data.data,1);
         name = [name ' (normalized)'];
     end
     
