@@ -126,6 +126,8 @@ for ds = 1:bids_info.number_datasets
             if average_freq
                 f = f(1,:);
                 power = nanmean(power,2);
+            elseif normalize(input_type)
+                power = (power - nanmean(power)) ./ nanstd(power);
             end
             
             %draw frequency
