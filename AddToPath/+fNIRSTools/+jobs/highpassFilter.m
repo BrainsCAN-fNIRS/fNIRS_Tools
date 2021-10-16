@@ -18,7 +18,12 @@ classdef highpassFilter < nirs.modules.AbstractModule
             else
                 % for each file
                 for i = 1:numel(data)
+                    is_nan = isnan(data(i).data);
+                    data(i).data(is_nan) = 0;
+                    
                     data(i).data = highpass(data(i).data, obj.passbandFrequency, data(i).Fs);
+                    
+                    data(i).data(is_nan) = nan;
                 end
             end
         end
