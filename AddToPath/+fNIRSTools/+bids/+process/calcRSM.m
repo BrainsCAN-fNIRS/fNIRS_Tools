@@ -125,7 +125,8 @@ end
 
 if bids_info.number_datasets > 1
     fprintf('Comparing variable tables...\n');
-    for col = 1:width(data_source(1).variables)
+    col_to_check = find(cellfun(@(x) any(strcmp(x, {'source' 'detector' 'type' 'ShortSeperation' 'cond'})), data_source(1).variables.Properties.VariableNames));
+    for col = col_to_check
         if iscell(data_source(1).variables{1,col})
             has_issue = any(arrayfun(@(d) any(~cellfun(@strcmp, data_source(1).variables{:,col}, d.variables{:,col})), data_source));
         else
