@@ -30,10 +30,12 @@ classdef QTExcludeChannels < nirs.modules.AbstractModule
 							error('Cannot be called after MBLL unless QTAddChannelMeasures has already been applied')
 						else
 							%use values from QTAddChannelMeasures if called after MBLL
+							%NOTE: only fill_value and threshold_ratio are used here, the other params must have been set during QTAddChannelMeasures
 							ind_to_exclude = data(i).probe.link.RatioGoodSCI < obj.threshold_ratio;
 							channels_to_exclude = ind_to_exclude(strcmp(data(i).probe.link.type, data(i).probe.types{1}));
 						end
 					else
+						%standard method...
 					
 						%job
 						job = nirs.modules.QT;
