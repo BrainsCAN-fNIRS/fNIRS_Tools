@@ -78,8 +78,9 @@ if ~exist(root_directory, 'dir')
     end
 end
 
-%store directory
+%store directory and task name
 bids_info.root_directory = root_directory;
+bids_info.task_name = task_name;
 
 %% Select Datasets
 
