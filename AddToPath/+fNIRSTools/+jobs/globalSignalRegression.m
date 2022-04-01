@@ -2,6 +2,7 @@ classdef globalSignalRegression < nirs.modules.AbstractModule
     properties
         fields_for_exclusion = {}; %name of any logical fields to use for exclusion from global signal calculation, case-sensitive
         normalize = true; %when calculating global signal, first normalize each signal by dividing out its variance
+        indiv_types = true; %perform separately for each data type
     end
     
     methods
@@ -35,15 +36,23 @@ classdef globalSignalRegression < nirs.modules.AbstractModule
                     has_data = (nanmax(data(i).data) > nanmin(data(i).data))';
                     
                     %for each data type...
-                    number_types = length(data.probe.types);
+                    if obj.indiv_types
+                        number_types = length(data.probe.types);
+                    else
+                        number_types = 1;
+                    end
                     for type_ind = 1:number_types
-                        type = data.probe.types(type_ind);
-                        
-                        %select signals of this type
-                        if iscell(type)
-                            select_type = strcmpi(data(i).probe.link.type,type);
+                        if obj.indiv_types
+                            type = data.probe.types(type_ind);
+
+                            %select signals of this type
+                            if iscell(type)
+                                select_type = strcmpi(data(i).probe.link.type,type);
+                            else
+                                select_type = (data(i).probe.link.type == type);
+                            end
                         else
-                            select_type = (data(i).probe.link.type == type);
+                            select_type = true(height(data(i).probe.link), 1);
                         end
 
                         %initialize source selection as all signals of type
