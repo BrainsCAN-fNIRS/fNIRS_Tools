@@ -124,6 +124,8 @@ if set_conditions
     
     fprintf('%s\tReading order file...\n', print_prefix);
     [xls_num,~,xls] = xlsread(order_filepath);
+    last_row = find(~cellfun(@(x) length(x)==1 && isnan(x), xls(:,1)), 1, 'last');
+    xls = xls(1:last_row,:);
     xls(6:end,5) = num2cell(xls_num(5:end,5));
     
     
