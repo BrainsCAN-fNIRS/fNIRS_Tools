@@ -44,7 +44,7 @@ end
 
 %already done?
 if exists_snirf && exists_raw
-    fprintf('%sOutput already exists, skipping import!', print_prefix);
+    fprintf('%sOutput already exists, skipping import!\n', print_prefix);
     return
 end
 
