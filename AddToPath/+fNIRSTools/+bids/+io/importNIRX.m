@@ -152,6 +152,16 @@ if set_conditions
         raw.time(frames_to_clear_start) = [];
     end
     
+    %trim auxillary to match main data time range
+    for i = 1:raw.auxillary.count
+        key = raw.auxillary.keys{i};
+        aux = raw.auxillary(key);
+        select = aux.time >= raw.time(1) & aux.time <= raw.time(end);
+        aux.data = aux.data(select,:);
+        aux.time = aux.time(select);
+        raw.auxillary(key) = aux;
+    end
+    
     
     fprintf('%s\tParsing order...\n', print_prefix);
     order = cell2table(xls(6:end, 1:5), 'VariableNames', xls(5,1:5));
