@@ -45,17 +45,40 @@ if(~isempty(dir(fullfile(folder,'*SDmask.mat'))))
 end
 
 
-file = dir(fullfile(folder,'*.hdr'));
+% file = dir(fullfile(folder,'*.hdr'));
+% if(isempty(file))
+%     file = dir(fullfile(folder,'*_config.json'));  % new format
+%     if(isempty(file))
+%         raw=[];
+%         return;
+%     else
+%         info = parsehdrJSON(fullfile(folder,file(1).name));
+%     end
+% else
+%     info = parsehdr(fullfile(folder,file(1).name));
+% end
+
+%try json before hdr
+file = dir(fullfile(folder,'*_config.json'));  % new format
 if(isempty(file))
-    file = dir(fullfile(folder,'*_config.json'));  % new format
+    file = dir(fullfile(folder,'*.hdr'));
     if(isempty(file))
         raw=[];
         return;
     else
-        info = parsehdrJSON(fullfile(folder,file(1).name));
+        info = parsehdr(fullfile(folder,file(1).name));
     end
 else
-    info = parsehdr(fullfile(folder,file(1).name));
+    info = parsehdrJSON(fullfile(folder,file(1).name));
+    
+    %get sampling rate from header if not in json
+    file = dir(fullfile(folder,'*.hdr'));
+    if ~isfield(info, 'SamplingRate') && ~isempty(file)
+        hdr = parsehdr(fullfile(folder,file(1).name));
+        if isfield(hdr, 'Sampling_rate')
+            info.SamplingRate = hdr.Sampling_rate;
+        end
+    end
 end
 
 if(isfield(info,'ShortDetectors') && (info.ShortDetectors > 0) && (size(probe.detPos,1) == (info.Detectors - info.ShortDetectors)))
@@ -152,7 +175,11 @@ end
         end
         
         d = dlmread(fullfile(folder,file(1).name));
-        raw.data=[raw.data d(:,lst)];
+        if strcmp(info.data_out_stream_name, 'Aurora') && (size(d,2) == length(kk))
+            raw.data=[raw.data d];
+        else
+            raw.data=[raw.data d(:,lst)];
+        end
     end
     
     raw.time=[0:size(raw.data,1)-1]/info.SamplingRate;
