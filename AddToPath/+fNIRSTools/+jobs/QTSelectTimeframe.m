@@ -6,6 +6,7 @@ classdef QTSelectTimeframe < nirs.modules.AbstractModule
         window_sec = 5;
         window_overlap = 0;
         cardiac_freq = [0.5 2.5];
+        penalize_dropout = false;
     end
     
     methods
@@ -57,9 +58,20 @@ classdef QTSelectTimeframe < nirs.modules.AbstractModule
                     %evaluate all possible timeframes
                     number_of_selection = (qt.qMats.n_windows - bins_to_select + 1);
                     selection_value = nan(1, number_of_selection);
+                    signal_means = nanmean(data(i).data);
+                    signal_means_normal = signal_means > 0.05;
                     for bin_start = 1:number_of_selection
                         bins_selected = bin_start:(bin_start+bins_to_select - 1);
                         selection_value(bin_start) = sum(bin_value(bins_selected));
+                        
+                        if obj.penalize_dropout
+                             time_start = (bin_start-1) * bin_duration;
+                             time_end = bins_selected(end) * bin_duration;
+                             ind = data(i).time >= time_start & data(i).time <= time_end;
+                             penalty = sum(sum(data(i).data(ind,signal_means_normal) < 0.01)) / qt.qMats.fs;
+                             penalty = penalty + sum(any(diff(data(i).data(ind,:)) > 0.1)) * bins_to_select;
+                             selection_value(bin_start) = selection_value(bin_start) - penalty;
+                        end
                     end
 
                     %select best timeframe
