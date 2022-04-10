@@ -102,13 +102,13 @@ end
 
 
 %% Now, let's get the data
-file = rdir(fullfile(folder,'*.nirs' ));
-if(~isempty(file))
-    raw=nirs.io.loadDotNirs(file(1).name,true);
-    probe.link=raw.probe.link;
-    raw.probe=probe;
-    
-else
+% file = rdir(fullfile(folder,'*.nirs' ));
+% if(~isempty(file))
+%     raw=nirs.io.loadDotNirs(file(1).name,true);
+%     probe.link=raw.probe.link;
+%     raw.probe=probe;
+%     
+% else
     [s,d]=find(info.S_D_Mask);
     [s,a]=sort(s); d=d(a);
     
@@ -156,7 +156,7 @@ else
     end
     
     raw.time=[0:size(raw.data,1)-1]/info.SamplingRate;
-end
+% end
 
 raw.probe.fixeddistances=raw.probe.swap_reg.distances;
 
