@@ -18,16 +18,18 @@ number_types = length(types);
 inds = cell(number_channels,1);
 for c = 1:number_channels
     for t = 1:number_types
-        
+        %match source/detector
         ind = data.probe.link.source==channels.source(c) & ...
                     data.probe.link.detector==channels.detector(c);
-                
+        
+        %match type
         if isnumeric(types)
             ind = ind & (data.probe.link.type == types(t));
         else
             ind = ind & strcmp(data.probe.link.type, types{t});
         end
         
+        %should find one match
         ind = find(ind);
         if length(ind) ~= 1
             error
