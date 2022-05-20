@@ -175,7 +175,7 @@ end
         end
         
         d = dlmread(fullfile(folder,file(1).name));
-        if strcmp(info.data_out_stream_name, 'Aurora') && (size(d,2) == length(kk))
+        if isfield(info,'data_out_stream_name') && strcmp(info.data_out_stream_name, 'Aurora') && (size(d,2) == length(kk))
             raw.data=[raw.data d];
         else
             raw.data=[raw.data d(:,lst)];
