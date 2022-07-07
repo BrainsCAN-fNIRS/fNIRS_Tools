@@ -3,7 +3,7 @@
 % Returns "channels" table with:
 %   Source
 %   Detector
-%   TypeIndices
+%   TypeIndicesInLinks
 %   ShortSeperation (if provided)
 %
 function [channels,has_sdc_info] = GetChannels(data)
@@ -38,10 +38,10 @@ for c = 1:number_channels
         end
     end
 end
-channels.TypeIndices = inds;
+channels.TypeIndicesInLinks = inds;
 
 %
 has_sdc_info = any(strcmp(data.probe.link.Properties.VariableNames, 'ShortSeperation'));
 if has_sdc_info
-    channels.ShortSeperation = cellfun(@(i) data.probe.link.ShortSeperation(i(1)), channels.TypeIndices);
+    channels.ShortSeperation = cellfun(@(i) data.probe.link.ShortSeperation(i(1)), channels.TypeIndicesInLinks);
 end
