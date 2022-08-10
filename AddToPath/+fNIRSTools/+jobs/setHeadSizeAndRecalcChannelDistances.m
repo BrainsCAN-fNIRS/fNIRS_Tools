@@ -1,11 +1,23 @@
 classdef setHeadSizeAndRecalcChannelDistances < nirs.modules.AbstractModule
     properties
 		%any combination of the three measures may be used, absent measures will be estimated
+        %valid values:
+        %   NaN or []   excluded
+        %   numeric     directly used for all datasets
+        %   char        the name of a key in data.demographics, the corresponding value is used individually per dataset
         lpa_cz_rpa_mm = nan;
 		Iz_cz_nas_mm = nan;
 		circumference_mm = nan;
 		
 		skip_SDC_distances = true; %if true, SDC distances will not be scaled (probe.link.ShortSeperation must have been set, else ignored)
+    end
+    
+    properties (Access = private)
+        var_field_pairs = {
+                            'lpa_cz_rpa_mm'     'lpa-cz-rpa'
+                            'Iz_cz_nas_mm'      'Iz-cz-nas'
+                            'circumference_mm'  'circumference'
+                            };
     end
     
     methods
@@ -17,23 +29,23 @@ classdef setHeadSizeAndRecalcChannelDistances < nirs.modules.AbstractModule
         end
         
         function data = runThis( obj, data )
-            %create headsize dictionary
-			headsize = Dictionary();
-			if ~isempty(obj.lpa_cz_rpa_mm) && ~isnan(obj.lpa_cz_rpa_mm)
-				headsize('lpa-cz-rpa') = obj.lpa_cz_rpa_mm;
-			end
-			if ~isempty(obj.Iz_cz_nas_mm) && ~isnan(obj.Iz_cz_nas_mm)
-				headsize('Iz-cz-nas') = obj.Iz_cz_nas_mm;
-			end
-			if ~isempty(obj.circumference_mm) && ~isnan(obj.circumference_mm)
-				headsize('circumference') = obj.circumference_mm;
-			end
-			if isempty(headsize)
-				error('At least one measurement must be set')
-			end
-			
 			%apply to each dataset...
 			for i = 1:numel(data)
+                %create headsize dictionary
+                headsize = Dictionary();
+                for j = 1:size(obj.var_field_pairs, 1)
+                    val = obj.(obj.var_field_pairs{j,1});
+                    if ischar(val)
+                        val = data(i).demographics(val);
+                    end
+                    if ~isempty(val) && ~isnan(val)
+                        headsize(obj.var_field_pairs{j,2}) = val;
+                    end
+                end
+                if isempty(headsize)
+                    error('At least one measurement must be set')
+                end
+                
 				%get channel table
                 [channels, has_sdc_labels] = fNIRSTools.internal.GetChannels(data(i));
                 number_channels = height(channels);
