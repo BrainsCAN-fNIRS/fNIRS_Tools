@@ -163,6 +163,12 @@ for d = data'
 end
 fid = unique(fid,'rows');
 
+fid3D = [];
+for d = data'
+    fid3D = [fid3D; d.probe.optodes_registered(contains(d.probe.optodes.Type, 'FID'), :)];
+end
+fid3D = unique(fid3D,'rows');
+
 %% Probe
 
 %signal types
@@ -179,18 +185,23 @@ units = data(1).probe.optodes.Units{1};
 
 %init
 probe = nirs.core.Probe1020;
+probe.optodes_registered = probe.optodes;
 
 %optodes
 for otype = {'Source' 'Detector'}
     otype = otype{1};
     for o = 1:locations_count
         probe.optodes(end+1,:) = {sprintf('%s-%04d',otype,o) , locations(o,1) , locations(o,2) , locations(o,3) , otype , units};
+        probe.optodes_registered(end+1,:) = {sprintf('%s-%04d',otype,o) , locations3D(o,1) , locations3D(o,2) , locations3D(o,3) , otype , units};
     end
 end
 
 %fiducials
 if ~isempty(fid)
     probe.optodes = [probe.optodes; fid];
+end
+if ~isempty(fid3D)
+    probe.optodes_registered = [probe.optodes_registered; fid3D];
 end
 
 %links
@@ -216,7 +227,7 @@ probe.link = links;
 %% Save Data
 
 fprintf('Writing: %s\n', filepath_mat);
-save(filepath_mat, 'locations', 'channels', 'channels_sdc', 'distance_threshold_2D', 'channels_counts', 'probe');
+save(filepath_mat, 'locations', 'locations3D', 'channels', 'channels_sdc', 'distance_threshold_2D', 'channels_counts', 'probe');
 
 
 %% Figure
