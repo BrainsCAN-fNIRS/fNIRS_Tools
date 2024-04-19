@@ -194,6 +194,8 @@ if any(exists)
     ind_cond_POI = cellfun(@(x) ~x.regressor_no_interest, data.stimulus.values);
     bids_info.first_condition_set = cellfun(@(x) x.name, data.stimulus.values(ind_cond_POI), 'UniformOutput', false);
     
+    bids_info.first_Fs = data.Fs;
+
     bids_info.first_channel_set = unique(data.probe.link(:,1:2),'rows');
     bids_info.first_source_count = size(data.probe.srcPos, 1);
     bids_info.first_detector_count = size(data.probe.detPos, 1);
