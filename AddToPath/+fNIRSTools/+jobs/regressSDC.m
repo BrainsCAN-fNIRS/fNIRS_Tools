@@ -15,7 +15,11 @@ classdef regressSDC < nirs.modules.AbstractModule
                 
 				for j = 1:height(data(i).probe.link)
 					if ~data(i).probe.link.ShortSeperation(j)
-						ind_sdc_dt = strcmp(data(i).probe.link.type, data(i).probe.link.type{j}) & data(i).probe.link.ShortSeperation;
+                        if isnumeric(data(i).probe.link.type)
+                            ind_sdc_dt = (data(i).probe.link.type == data(i).probe.link.type(j)) & data(i).probe.link.ShortSeperation;
+                        else
+						    ind_sdc_dt = strcmp(data(i).probe.link.type, data(i).probe.link.type{j}) & data(i).probe.link.ShortSeperation;
+                        end
 
 						sig = data(i).data(:,j);
 						sdcs = data(i).data(:,ind_sdc_dt);
