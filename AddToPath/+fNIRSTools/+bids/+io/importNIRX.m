@@ -39,7 +39,7 @@ else
     identify_sdc = false;
 end
 
-if exist('extra_func', 'var')
+if exist('extra_func', 'var') && ~isempty(extra_func)
     do_extra_func = true;
 else
     do_extra_func = false;
