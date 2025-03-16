@@ -7,8 +7,17 @@ end
 
 %% Handle Inputs
 
-if ~exist(data_directory, 'dir')
-    error('Data directory does not exist: %s', data_directory)
+[fol, name, type] = fileparts(data_directory);
+dot_nirs_mode = strcmp(type, ".nirs");
+
+if dot_nirs_mode
+    if ~exist(data_directory, 'file')
+        error('Dot nirs file does not exist: %s', data_directory)
+    end
+else
+    if ~exist(data_directory, 'dir')
+        error('Data directory does not exist: %s', data_directory)
+    end
 end
 
 if ~ischar(order_filepath)
@@ -60,10 +69,14 @@ end
 
 fprintf('%sReading NIRx data...\n', print_prefix);
 try
-    try
-        text = evalc('raw = nirs.io.loadNIRx(data_directory);'); %redirect messages
-    catch
-        text = evalc('raw = nirs.io.loadDirectory(data_directory);'); %redirect messages
+    if dot_nirs_mode
+        text = evalc('raw = nirs.io.loadDotNirs(data_directory);'); %redirect messages
+    else
+        try
+            text = evalc('raw = nirs.io.loadNIRx(data_directory);'); %redirect messages
+        catch
+            text = evalc('raw = nirs.io.loadDirectory(data_directory);'); %redirect messages
+        end
     end
     duration = raw.time(end);
 catch err
