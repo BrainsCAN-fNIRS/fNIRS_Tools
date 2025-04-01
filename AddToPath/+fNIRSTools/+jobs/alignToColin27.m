@@ -17,7 +17,7 @@ classdef alignToColin27 < nirs.modules.AbstractModule
                 lambda = unique(data(i).probe.link.type);
                 fwdBEM = nirs.registration.Colin27.BEM_V2(lambda);
                 data(i).probe = data(i).probe.register_mesh2probe(fwdBEM.mesh);
-                data(i).probe = data(i).probe.SetFiducialsVisibility(false);
+                data(i).probe = data(i).probe.SetFiducials_Visibility(false);
                 
                 %align with fiducials (non-rigid)
                 m = data(i).probe.getmesh;
