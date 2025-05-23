@@ -1,4 +1,4 @@
-function fNIRSTools_bids_io_importNIRX(bids_info, data_directory, order_filepath, short_distance_threshold, print_prefix, extra_func)
+function fNIRSTools_bids_io_importNIRX(bids_info, data_directory, order_filepath, short_distance_threshold, print_prefix, extra_func, NIRx_infant_template)
 
 %% Check BIDS Info
 if bids_info.number_datasets ~= 1
@@ -45,6 +45,10 @@ else
     do_extra_func = false;
 end
 
+if ~exist('infant_template', 'var') || isempty(NIRx_infant_template)
+    NIRx_infant_template = false;
+end
+
 %% Output Filepath
 
 %filepath
@@ -73,7 +77,7 @@ try
         text = evalc('raw = nirs.io.loadDotNirs(data_directory);'); %redirect messages
     else
         try
-            text = evalc('raw = nirs.io.loadNIRx(data_directory);'); %redirect messages
+            text = evalc('raw = nirs.io.loadNIRx(data_directory, NIRx_infant_template);'); %redirect messages
         catch
             text = evalc('raw = nirs.io.loadDirectory(data_directory);'); %redirect messages
         end
