@@ -5,7 +5,7 @@
 %
 % Supported Templates: Colin27 (default), NIRxGeom
 %
-function [jobs] = registerRawToTemplateBrain(jobs, template)
+function [jobs] = registerRawToTemplateBrain(jobs, template_name)
 
 %% Defaults
 
