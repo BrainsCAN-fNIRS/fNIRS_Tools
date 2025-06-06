@@ -55,6 +55,15 @@ classdef setHeadSizeAndRecalcChannelDistances < nirs.modules.AbstractModule
                 
                 %scale optode positions (sets optodes_registered and srcPos3D/detPos3D)
 				p = nirs.util.registerprobe1020(data.probe, headsize);
+
+                %confirm that resize worked
+                headsize_new = p.get_headsize;
+                for f = string(headsize.keys)
+                    d = abs(headsize_new(f.char) - headsize(f.char));
+                    if d>1
+                        error("Failed to resize correctly. Likely due to issues in registerprobe1020 and applytform.")
+                    end
+                end
 				
                 %fetch 3D positions once because it is slow
                 s_xyz = p.srcPos3D;
