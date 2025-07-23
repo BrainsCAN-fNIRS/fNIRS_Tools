@@ -91,12 +91,6 @@ catch err
     rethrow(err)
 end
 
-%% Optional Extra Function
-
-if do_extra_func
-    raw = extra_func(raw);
-end
-
 %% Set Run Info
 
 fprintf('%sAdding run info...\n', print_prefix);
@@ -265,6 +259,12 @@ if set_conditions
     imwrite(img.cdata,filepath);
     close(fig);
     
+end
+
+%% Optional Extra Function
+
+if do_extra_func
+    raw = extra_func(raw);
 end
 
 %% Save RAW
