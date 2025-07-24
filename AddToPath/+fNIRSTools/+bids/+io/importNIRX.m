@@ -77,7 +77,7 @@ try
         text = evalc('raw = nirs.io.loadDotNirs(data_directory);'); %redirect messages
     else
         try
-            text = evalc('raw = nirs.io.loadNIRx(data_directory, NIRx_infant_template);'); %redirect messages
+            text = evalc('raw = nirs.io.loadNIRx(data_directory, ~NIRx_infant_template);'); %redirect messages
         catch
             text = evalc('raw = nirs.io.loadDirectory(data_directory);'); %redirect messages
         end
